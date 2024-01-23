@@ -373,7 +373,7 @@ export default function Index() {
                             {/* Login Link */}
                             <div className="mt-4 text-center">
                                 <p>
-                                    Do you have an account?
+                                    Ya tienes una cuenta?
                                     <button
                                         className="ml-2 text-blue-500 hover:text-blue-800 font-bold"
                                         onClick={navigateToLogIn}
