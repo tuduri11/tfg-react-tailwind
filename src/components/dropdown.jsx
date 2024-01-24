@@ -1,8 +1,48 @@
-import { Fragment } from 'react';
+import { Fragment, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserIcon } from '@heroicons/react/20/solid';
+import { getAccessToken, getRefreshToken} from "../session"
+import Cookies from 'js-cookie'
+import { SERVER_DNS} from '../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 export default function Dropdown() {
+  const navigate = useNavigate(); // Hook para la navegación
+  const [isSubmitting, setIsSubmitting] = useState(false); // Estado para manejar el envío
+  const [errorMessages, setErrorMessages] = useState(''); // Estado para manejar los mensajes de error
+
+
+  async function logOut() {
+    let access = await getAccessToken()
+    let response = fetch(`${SERVER_DNS}/accounts/logout`,
+      {
+        method: 'POST',
+        mode: 'cors',
+        body: { 'access': access, 'refresh': getRefreshToken() },
+        headers: {
+          'Authorization': `Bearer ${access}`,
+          'Content-Type': 'application/json',
+        }
+      })
+      .then(response => response.json())
+      .catch((error) => {
+        setIsSubmitting(false)
+        setErrorMessages('Something went wrong')
+      })
+
+    const { success, msg } = await response
+    setIsSubmitting(false)
+    if (success) {
+      Cookies.remove('access_token')
+      Cookies.remove('refresh_token')
+      setIsSubmitting(false)
+      //Si el logout es correcto, nos redirige al login otra vez.
+      navigate('/login')
+    }
+    else {
+      setErrorMessages(msg)
+    }
+  }
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
@@ -33,9 +73,15 @@ export default function Dropdown() {
           {/* ... otros Menu.Items ... */}
           <div className="py-1">
             <Menu.Item>
-              <a href="/init" className="block px-4 py-2 text-sm text-gray-700">
-                Log out
-              </a>
+              {({ active }) => (
+                <button
+                  className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
+                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  onClick={logOut} // Vinculando el evento onClick
+                >
+                  Log out
+                </button>
+              )}
             </Menu.Item>
           </div>
         </Menu.Items>

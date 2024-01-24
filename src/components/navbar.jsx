@@ -1,12 +1,13 @@
 import React, { useState,useEffect } from 'react';
-import { Fragment } from 'react'
-import { Disclosure, Menu, Transition } from '@headlessui/react'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import Dropdown from './dropdown';
 import { isAuthenticated } from '../session';
 import logo from "../assets/LogoMatematicas.png"
 
 const defaultItems = [
+    {
+        slug: "/home/",
+        anchor: "Ejercicios"
+    },
     {
         slug: "/about-us/",
         anchor: "Sobre Nosotros"
@@ -26,6 +27,10 @@ const defaultItems = [
     
 ];
 const otherItems = [
+    {
+        slug: "/home/",
+        anchor: "Ejercicios"
+    },
     {
         slug: "/premium/",
         anchor: "Premium"

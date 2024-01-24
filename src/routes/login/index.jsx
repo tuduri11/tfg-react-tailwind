@@ -1,19 +1,16 @@
 import React from 'react';
-import { useState, useMemo, useEffect, useCallback } from "react";
-import useEffectWithoutFirstRun from '../../utils/useEffectWithoutFirstRun';
+import { useState,useEffect, useCallback } from "react";
 import { SERVER_DNS, ACCESS_TOKEN_EXPIRE_TIME } from '../../utils/constants';
 import ErrorMessage from '../../components/ErrorMessage'
-import { Routes, Route, useNavigate, redirect } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../../utils/localStorage'
 import Cookies from 'js-cookie'
-import { getAccessToken, getRefreshToken, isAuthenticated } from "../../session"
+import {isAuthenticated } from "../../session"
 import Navbar from "../../components/navbar"
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export default function Login() {
-
-  const [show, setShow] = useState(false);
-  const handleClick = () => setShow(!show);
+  
   const [email, setEmail] = useLocalStorage('email', '');
   const [emailError, setEmailError] = useState(false);
   const [password, setPassword] = useState('');
@@ -84,47 +81,15 @@ export default function Login() {
     console.log('validate email')
     setEmailError(email === '')
   }, [email])
+  
   const validatePassword = useCallback(() => {
     setPasswordError(password === '')
   }, [password])
+
   const validateParameters = useCallback(() => {
     validateEmail()
     validatePassword()
   }, [validateEmail, validatePassword])
-
-  const updateEmailError = useEffectWithoutFirstRun(validateEmail, [email])
-  const updatePasswordError = useEffectWithoutFirstRun(validatePassword, [password])
-
-  async function logOut() {
-    let access = await getAccessToken()
-    let response = fetch(`${SERVER_DNS}/accounts/logout`,
-      {
-        method: 'POST',
-        mode: 'cors',
-        body: { 'access': access, 'refresh': getRefreshToken() },
-        headers: {
-          'Authorization': `Bearer ${access}`,
-          'Content-Type': 'application/json',
-        }
-      })
-      .then(response => response.json())
-      .catch((error) => {
-        setIsSubmitting(false)
-        setErrorMessages('Something went wrong')
-      })
-
-    const { success, msg } = await response
-    setIsSubmitting(false)
-    if (success) {
-      Cookies.remove('access_token')
-      Cookies.remove('refresh_token')
-      setIsLoggedIn(false)
-    }
-    else {
-      setErrorMessages(msg)
-    }
-  }
-
 
 
   return (
