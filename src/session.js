@@ -33,6 +33,7 @@ export async function getAccessToken()
 }
 
 export const getRefreshToken = () =>{ return Cookies.get('refresh_token') }
+
 export async function isAuthenticated(){
   let access = await getAccessToken().catch(e=>{return undefined})
 

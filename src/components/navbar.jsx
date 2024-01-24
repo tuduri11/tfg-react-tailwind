@@ -8,21 +8,22 @@ import logo from "../assets/LogoMatematicas.png"
 
 const defaultItems = [
     {
-        slug: "/premium/",
-        anchor: "Premium"
+        slug: "/about-us/",
+        anchor: "Sobre Nosotros"
     },
     {
-        slug: "/register/",
-        anchor: "Regístrate"
+        slug: "/premium/",
+        anchor: "Premium"
     },
     {
         slug: "/login/",
         anchor: "Log in"
     },
     {
-        slug: "/about-us/",
-        anchor: "Sobre Nosotros"
+        slug: "/register/",
+        anchor: "Regístrate"
     }
+    
 ];
 const otherItems = [
     {
@@ -61,8 +62,8 @@ export default function Navbar() {
         <nav className="relative bg-white shadow dark:bg-gray-800">
             <div className="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
                 <div className="flex items-center justify-between">
-                    <a href="">
-                        <img className="w-auto h-6 sm:h-7" src={logo} alt="Logo" />
+                    <a href="/">
+                    <img className="w-auto h-8 sm:h-10" src={logo} alt="Logo" />
                     </a>
 
                     {/* Mobile menu button */}

@@ -1,11 +1,11 @@
 import React from 'react';
-import Navbar from '../../components/navbar';
+import Inicio from '../../components/inicio';
 
 
 export default function Init()  {
     return (
-      
-      <Navbar></Navbar>
+      <Inicio></Inicio>
+
     );
   }
   
