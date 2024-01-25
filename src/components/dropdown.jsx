@@ -5,6 +5,7 @@ import { getAccessToken, getRefreshToken} from "../session"
 import Cookies from 'js-cookie'
 import { SERVER_DNS} from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
+import { FaUser } from 'react-icons/fa';
 
 export default function Dropdown() {
   const navigate = useNavigate(); // Hook para la navegación
@@ -46,8 +47,8 @@ export default function Dropdown() {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50">
-          <UserIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <Menu.Button className="inline-flex items-center justify-center rounded-md bg-transparent p-2 text-white hover:bg-white hover:bg-opacity-20">
+          <FaUser className="h-5 w-5" /> {/* Icono de usuario */}
         </Menu.Button>
       </div>
 

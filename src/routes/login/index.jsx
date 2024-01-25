@@ -1,16 +1,16 @@
 import React from 'react';
-import { useState,useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { SERVER_DNS, ACCESS_TOKEN_EXPIRE_TIME } from '../../utils/constants';
 import ErrorMessage from '../../components/ErrorMessage'
 import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../../utils/localStorage'
 import Cookies from 'js-cookie'
-import {isAuthenticated } from "../../session"
+import { isAuthenticated } from "../../session"
 import Navbar from "../../components/navbar"
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 
 export default function Login() {
-  
+
   const [email, setEmail] = useLocalStorage('email', '');
   const [emailError, setEmailError] = useState(false);
   const [password, setPassword] = useState('');
@@ -81,7 +81,7 @@ export default function Login() {
     console.log('validate email')
     setEmailError(email === '')
   }, [email])
-  
+
   const validatePassword = useCallback(() => {
     setPasswordError(password === '')
   }, [password])
@@ -130,11 +130,11 @@ export default function Login() {
                       <input
                         type="email"
                         value={email}
-                        placeholder="Enter your email"
+                        placeholder="Introduzca su email"
                         onChange={(e) => setEmail(e.target.value)}
                         className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
                       />
-                      {!emailError ? null : (<p className="text-red-500 text-xs italic">El email es requerida</p>)}
+                      {!emailError ? null : (<p className="text-red-500 text-xs italic">El email es requerido</p>)}
                     </div>
                     <div className={`space-y-1 ${passwordError ? 'text-red-500' : ''}`}>
                       <label htmlFor="password" className="text-sm font-medium">
