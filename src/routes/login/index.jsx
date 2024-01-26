@@ -94,7 +94,7 @@ export default function Login() {
 
   return (
     <>
-      <div><Navbar></Navbar></div>
+      
       {/* Pages: Sign In: Boxed */}
 
       {/* Page Container */}

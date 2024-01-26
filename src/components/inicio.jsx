@@ -10,7 +10,7 @@ export default function Inicio() {
           <div className="relative overflow-hidden bg-white dark:bg-gray-900 dark:text-gray-100">
             {/* Main Header */}
             
-            <Navbar></Navbar>
+            
             {/* END Main Header */}
     
             {/* Hero Content */}
@@ -29,7 +29,7 @@ export default function Inicio() {
                   <div className="flex flex-col justify-center space-y-2 pb-16 pt-10 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0 lg:justify-start">
                     <a
                       href="/Register"
-                      className="inline-flex items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-7 py-3.5 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
+                      className="inline-flex items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-7 py-3.5 font-semibold leading-6 text-white hover:border-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 hover:bg-blue-500 hover:delay-300"
                     >
                       <span>Regístrate</span>
                     </a>
@@ -60,7 +60,7 @@ export default function Inicio() {
             </div>
             {/* END Hero Content */}
             
-            <Footer></Footer>
+         
           </div>
           {/* END Hero Section: Image Side with Simple Header */}
         </>

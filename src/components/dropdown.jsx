@@ -1,9 +1,9 @@
 import { Fragment, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
 import { UserIcon } from '@heroicons/react/20/solid';
-import { getAccessToken, getRefreshToken} from "../session"
+import { getAccessToken, getRefreshToken } from "../session"
 import Cookies from 'js-cookie'
-import { SERVER_DNS} from '../utils/constants';
+import { SERVER_DNS } from '../utils/constants';
 import { useNavigate } from 'react-router-dom';
 import { FaUser } from 'react-icons/fa';
 
@@ -13,6 +13,9 @@ export default function Dropdown() {
   const [errorMessages, setErrorMessages] = useState(''); // Estado para manejar los mensajes de error
 
 
+  const navigateToPerfil = () => {
+    navigate('/edit-perfil');
+  };
   async function logOut() {
     let access = await getAccessToken()
     let response = fetch(`${SERVER_DNS}/accounts/logout`,
@@ -61,23 +64,25 @@ export default function Dropdown() {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+        <Menu.Items className="absolute md:right-0 md:origin-top-right z-10 mt-2 w-40  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
             {/* A continuación, se muestra cómo aplicar las clases directamente */}
-            <Menu.Item>
-              <a href="/edit-perfil" className="block px-4 py-2 text-sm text-gray-700">
+            <Menu.Item className="hover:bg-slate-300">
+            <button
+                className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
+                onClick={navigateToPerfil} // Vinculando el evento onClick
+              >
                 Editar perfil
-              </a>
+              </button>
             </Menu.Item>
             {/* Repite esto para cada Menu.Item */}
           </div>
           {/* ... otros Menu.Items ... */}
           <div className="py-1">
-            <Menu.Item>
+            <Menu.Item className="hover:bg-slate-300">
               {({ active }) => (
                 <button
-                  className={`${active ? 'bg-gray-100 text-gray-900' : 'text-gray-700'
-                    } group flex w-full items-center rounded-md px-2 py-2 text-sm`}
+                  className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
                   onClick={logOut} // Vinculando el evento onClick
                 >
                   Log out

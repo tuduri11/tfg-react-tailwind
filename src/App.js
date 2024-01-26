@@ -12,13 +12,16 @@ import Init from './routes/init';
 import EditProfile from './routes/editProfile';
 import Premium from './routes/premium';
 import AboutUs from './routes/aboutUs';
-
+import Footer from './components/footer';
+import Navbar from './components/navbar';
 
 function App() {
   return (
 
     <Router>
-      <div>
+      <div className="flex flex-col min-h-screen">
+      <Navbar></Navbar>
+      <div className="flex-grow">
         <Routes>
           <Route path="/" element={<Init />}></Route>
           <Route path="/home" element={<Home />}></Route>
@@ -28,6 +31,8 @@ function App() {
           <Route path="/premium" element={<Premium />}></Route>
           <Route path="/about-us" element={<AboutUs />}></Route>
         </Routes>
+      </div>
+      <Footer></Footer>
       </div>
     </Router>
   );

@@ -245,7 +245,7 @@ export default function Index() {
 
     return (
         <>
-            <div><Navbar></Navbar></div>
+            
             <div
                 id="page-container"
                 className="mx-auto flex min-h-dvh w-full min-w-[320px] flex-col bg-gray-100 dark:bg-gray-900 dark:text-gray-100"
@@ -443,7 +443,7 @@ export default function Index() {
                 {/* Aacaba pagina */}
             </div>
             {/* Acaba container */}
-            <div><Footer></Footer></div>
+            
 
         </>
     );
