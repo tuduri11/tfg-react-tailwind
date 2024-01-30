@@ -1,13 +1,14 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import useEffectWithoutFirstRun from '../../utils/useEffectWithoutFirstRun';
 import { calculateAge, emailBase, nameBase, surnameBase } from '../../utils/dateUtils';
-import { SERVER_DNS } from '../../utils/constants';
+import { SERVER_DNS, ACCESS_TOKEN_EXPIRE_TIME } from '../../utils/constants';
 import ErrorMessage from '../../components/ErrorMessage'
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import React from 'react';
 import { Routes, Route, useNavigate, redirect } from 'react-router-dom'
-import Navbar from "../../components/navbar";
-import Footer from "../../components/footer"
+import { useAuth } from '../../utils/AuthContext';
+import Cookies from 'js-cookie'
+import { isAuthenticated } from "../../session"
 
 
 export default function Index() {
@@ -48,6 +49,12 @@ export default function Index() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
+
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
+
+    useEffect(() => {
+        isAuthenticated().then(res => setIsLoggedIn(res));
+    }, [setIsLoggedIn]);
 
     const current = new Date();
     const currentDate = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
@@ -195,6 +202,51 @@ export default function Index() {
                 console.error('Error fetching universities:', error);
             });
     }, []);
+    //Si el registro es correcto, iniciamos sesion directamente. En teoria no debe haber errores.
+    async function login(email,password) {
+        setErrorMessages('')
+        if (!emailError && !passwordError) {
+            setIsSubmitting(true)
+            console.log('Submitted')
+            let jsonData = { "email": emailBase(email), "password": password }
+            let response = fetch(`${SERVER_DNS}/accounts/login`,
+                {
+                    method: 'POST',
+                    mode: 'cors',
+                    // credentials: "include",
+                    body: JSON.stringify(jsonData),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                })
+                .then(response => {
+                    return response.json()
+                })
+                .catch((error) => {
+                    setIsSubmitting(false)
+                    setErrorMessages('Something went wrong')
+                })
+
+            const { success, msg, refresh, access } = await response
+            // const {success, msg, token} = await response
+            setIsSubmitting(false)
+            if (success) {
+                //localStorage.setItem('csrftoken',token)
+                setIsLoggedIn(true)
+                const expires = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
+                Cookies.set('access_token', access, { expires: expires, sameSite: 'Lax' })
+                Cookies.set('refresh_token', refresh, { sameSite: 'Lax' })
+            }
+            else {
+                setErrorMessages(msg)
+            }
+        }
+        else {
+            setErrorMessages("Porfavor introduzca parametros válidos.")
+            setIsSubmitting(false)
+        }
+    };
+
 
     //Enviamos metodo Post de registro a backend.
     async function handleSubmit(event) {
@@ -207,7 +259,7 @@ export default function Index() {
             let universityValue = (selectedUniversity === "no-listed" || selectedUniversity === "no-university") ? null : selectedUniversity;
 
             console.log(universityValue)
-            let jsonData = { "email": emailBase(email), "password": password, "name": nameBase(nom), "surname":surnameBase(cognoms), "university": universityValue, "birthdate": data }
+            let jsonData = { "email": emailBase(email), "password": password, "name": nameBase(nom), "surname": surnameBase(cognoms), "university": universityValue, "birthdate": data }
             let response = fetch(`${SERVER_DNS}/accounts/register`,
                 {
                     method: 'POST',
@@ -227,6 +279,8 @@ export default function Index() {
                 setIsSubmitting(false)
                 if (success) {
                     setIsRegistered(true)
+                    await login(email,password);
+
                 }
                 else {
                     setErrorMessages(msg)
@@ -245,7 +299,7 @@ export default function Index() {
 
     return (
         <>
-            
+
             <div
                 id="page-container"
                 className="mx-auto flex min-h-dvh w-full min-w-[320px] flex-col bg-gray-100 dark:bg-gray-900 dark:text-gray-100"
@@ -293,146 +347,146 @@ export default function Index() {
                                     </div>
                                 </div>
 
-                            ) : ( 
-                            <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800 dark:text-gray-100">
+                            ) : (
+                                <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800 dark:text-gray-100">
 
-                                <div className="grow p-5 md:px-16 md:py-12">
+                                    <div className="grow p-5 md:px-16 md:py-12">
 
-                                    <form onSubmit={handleSubmit} className="space-y-6">
-                                        {/* Nombre*/}
-                                        <div className={`space-y-1 ${nomError ? 'text-red-500' : ''}`}>
-                                            <label htmlFor="nombre" className="text-sm font-medium">
-                                                Nombre
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={nom}
-                                                placeholder="Introduzca su nombre"
-                                                onChange={(e) => setNom(e.target.value)}
-                                                className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
-                                            />
-                                            {nomError && <p className="text-red-500 text-xs italic">{nameErrorMessages}</p>}
-                                        </div>
-                                        {/*Apellidos */}
-                                        <div className={`space-y-1 ${cognomsError ? 'text-red-500' : ''}`}>
-                                            <label htmlFor="apellidos" className="text-sm font-medium">
-                                                Apellidos
-                                            </label>
-                                            <input
-                                                type="text"
-                                                value={cognoms}
-                                                placeholder="Introduzca sus apellidos"
-                                                onChange={(e) => setCognoms(e.target.value)}
-                                                className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
-                                            />
-                                            {cognomsError && <p className="text-red-500 text-xs italic">{cognomsErrorMessages}</p>}
-                                        </div>
-                                        {/*Fecha nacimiento */}
-                                        <div className={`space-y-1 ${dataError ? 'text-red-500' : ''}`}>
-                                            <label htmlFor="fecha" className="text-sm font-medium">
-                                                Fecha de nacimiento
-                                            </label>
-                                            <input
-                                                type="date"
-                                                value={data}
-                                                onChange={(e) => setData(e.target.value)}
-                                                className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
-                                            />
-                                            {dataError && <p className="text-red-500 text-xs italic">{dateErrorMessages}</p>}
-                                        </div>
-                                        {/*Universidad */}
-                                        <div className={`space-y-1 ${universityError ? 'text-red-500' : ''}`}>
-                                            <label htmlFor="universidad" className="text-sm font-medium">
-                                                Universidad
-                                            </label>
-                                            <select
-                                                id="university"
-                                                className={`block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:focus:border-blue-500 ${universityError ? 'border-red-500' : ''}`}
-                                                value={selectedUniversity}
-                                                onChange={(e) => {
-                                                    setSelectedUniversity(e.target.value);
-                                                    validateUniversity();
-                                                }}
-                                            >
-                                                <option value="" disabled>
-                                                    Selecciona tu universidad
-                                                </option>
-                                                {universities.map((uni) => (
-                                                    <option key={uni.id} value={uni.id}>
-                                                        {uni.name}
-                                                    </option>
-                                                ))}
-                                                <option value="no-listed">Mi universidad no aparece</option>
-                                                <option value="no-university">No voy a la universidad</option>
-                                            </select>
-                                            {universityError && <p className="text-red-500 text-xs italic">{universityErrorMessage}</p>}
-                                        </div>
-                                        {/*Email */}
-                                        <div className={`space-y-1 ${emailError ? 'text-red-500' : ''}`}>
-                                            <label htmlFor="email" className="text-sm font-medium">
-                                                Email
-                                            </label>
-                                            <input
-                                                type="email"
-                                                value={email}
-                                                placeholder="Introduzca su email"
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
-                                            />
-                                            {emailError && <p className="text-red-500 text-xs italic">{emailErrorMessage}</p>}
-                                        </div>
-                                        {/*Contraseña */}
-                                        <div className={`space-y-1 ${passwordError ? 'text-red-500' : ''}`}>
-                                            <label htmlFor="password" className="text-sm font-medium">
-                                                Password
-                                            </label>
-                                            <div className="relative">
+                                        <form onSubmit={handleSubmit} className="space-y-6">
+                                            {/* Nombre*/}
+                                            <div className={`space-y-1 ${nomError ? 'text-red-500' : ''}`}>
+                                                <label htmlFor="nombre" className="text-sm font-medium">
+                                                    Nombre
+                                                </label>
                                                 <input
-                                                    type={showPassword ? 'text' : 'password'}
-                                                    value={password}
-                                                    placeholder="************"
-                                                    onChange={(e) => { setPassword(e.target.value) }}
+                                                    type="text"
+                                                    value={nom}
+                                                    placeholder="Introduzca su nombre"
+                                                    onChange={(e) => setNom(e.target.value)}
                                                     className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
                                                 />
-                                                <button
-                                                    type="button"
-                                                    onClick={() => setShowPassword(!showPassword)}
-                                                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                                {nomError && <p className="text-red-500 text-xs italic">{nameErrorMessages}</p>}
+                                            </div>
+                                            {/*Apellidos */}
+                                            <div className={`space-y-1 ${cognomsError ? 'text-red-500' : ''}`}>
+                                                <label htmlFor="apellidos" className="text-sm font-medium">
+                                                    Apellidos
+                                                </label>
+                                                <input
+                                                    type="text"
+                                                    value={cognoms}
+                                                    placeholder="Introduzca sus apellidos"
+                                                    onChange={(e) => setCognoms(e.target.value)}
+                                                    className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
+                                                />
+                                                {cognomsError && <p className="text-red-500 text-xs italic">{cognomsErrorMessages}</p>}
+                                            </div>
+                                            {/*Fecha nacimiento */}
+                                            <div className={`space-y-1 ${dataError ? 'text-red-500' : ''}`}>
+                                                <label htmlFor="fecha" className="text-sm font-medium">
+                                                    Fecha de nacimiento
+                                                </label>
+                                                <input
+                                                    type="date"
+                                                    value={data}
+                                                    onChange={(e) => setData(e.target.value)}
+                                                    className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
+                                                />
+                                                {dataError && <p className="text-red-500 text-xs italic">{dateErrorMessages}</p>}
+                                            </div>
+                                            {/*Universidad */}
+                                            <div className={`space-y-1 ${universityError ? 'text-red-500' : ''}`}>
+                                                <label htmlFor="universidad" className="text-sm font-medium">
+                                                    Universidad
+                                                </label>
+                                                <select
+                                                    id="university"
+                                                    className={`block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:focus:border-blue-500 ${universityError ? 'border-red-500' : ''}`}
+                                                    value={selectedUniversity}
+                                                    onChange={(e) => {
+                                                        setSelectedUniversity(e.target.value);
+                                                        validateUniversity();
+                                                    }}
                                                 >
-                                                    {showPassword ? <FiEyeOff /> : <FiEye />}
+                                                    <option value="" disabled>
+                                                        Selecciona tu universidad
+                                                    </option>
+                                                    {universities.map((uni) => (
+                                                        <option key={uni.id} value={uni.id}>
+                                                            {uni.name}
+                                                        </option>
+                                                    ))}
+                                                    <option value="no-listed">Mi universidad no aparece</option>
+                                                    <option value="no-university">No voy a la universidad</option>
+                                                </select>
+                                                {universityError && <p className="text-red-500 text-xs italic">{universityErrorMessage}</p>}
+                                            </div>
+                                            {/*Email */}
+                                            <div className={`space-y-1 ${emailError ? 'text-red-500' : ''}`}>
+                                                <label htmlFor="email" className="text-sm font-medium">
+                                                    Email
+                                                </label>
+                                                <input
+                                                    type="email"
+                                                    value={email}
+                                                    placeholder="Introduzca su email"
+                                                    onChange={(e) => setEmail(e.target.value)}
+                                                    className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
+                                                />
+                                                {emailError && <p className="text-red-500 text-xs italic">{emailErrorMessage}</p>}
+                                            </div>
+                                            {/*Contraseña */}
+                                            <div className={`space-y-1 ${passwordError ? 'text-red-500' : ''}`}>
+                                                <label htmlFor="password" className="text-sm font-medium">
+                                                    Password
+                                                </label>
+                                                <div className="relative">
+                                                    <input
+                                                        type={showPassword ? 'text' : 'password'}
+                                                        value={password}
+                                                        placeholder="************"
+                                                        onChange={(e) => { setPassword(e.target.value) }}
+                                                        className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
+                                                    />
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => setShowPassword(!showPassword)}
+                                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                                    >
+                                                        {showPassword ? <FiEyeOff /> : <FiEye />}
+                                                    </button>
+                                                    {passwordError && <p className="text-red-500 text-xs italic">{passwordErrorMessages}</p>}
+                                                </div>
+                                            </div>
+                                            {/*Si hay algun error enviado desde backend, se pondra en el componente ErrorMessage */}
+                                            {errorMessages && <ErrorMessage message={errorMessages} />}
+                                            {/*Boton submit */}
+                                            <div>
+                                                <button
+                                                    type="submit"
+                                                    className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
+                                                    isLoading={isSubmitting}
+                                                    onClick={validateParameters}
+                                                    disabled={emailError || passwordError || nomError || cognomsError || dataError || universityError}
+                                                >
+                                                    <span>Entrar</span>
                                                 </button>
-                                                {passwordError && <p className="text-red-500 text-xs italic">{passwordErrorMessages}</p>}
+                                                <div className="grid grid-cols-2 gap-2">
+                                                </div>
                                             </div>
-                                        </div>
-                                        {/*Si hay algun error enviado desde backend, se pondra en el componente ErrorMessage */}
-                                        {errorMessages && <ErrorMessage message={errorMessages} />}
-                                        {/*Boton submit */}
-                                        <div>
-                                            <button
-                                                type="submit"
-                                                className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
-                                                isLoading={isSubmitting}
-                                                onClick={validateParameters}
-                                                disabled={emailError || passwordError || nomError || cognomsError || dataError || universityError}
-                                            >
-                                                <span>Entrar</span>
-                                            </button>
-                                            <div className="grid grid-cols-2 gap-2">
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                                <div className="grow bg-gray-50 p-5 text-center text-sm md:px-16 dark:bg-gray-700/50">
-                                    Ya tienes una cuenta?
-                                    <button
-                                        onClick={navigateToLogIn}
-                                        className="font-medium text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
-                                    >
-                                        Log in
-                                    </button>
-                                </div>
+                                        </form>
+                                    </div>
+                                    <div className="grow bg-gray-50 p-5 text-center text-sm md:px-16 dark:bg-gray-700/50">
+                                        Ya tienes una cuenta?
+                                        <button
+                                            onClick={navigateToLogIn}
+                                            className="font-medium text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
+                                        >
+                                            Log in
+                                        </button>
+                                    </div>
 
-                            </div>
+                                </div>
                             )}
 
                             {/* Acaba formulario sing in */}
@@ -443,7 +497,7 @@ export default function Index() {
                 {/* Aacaba pagina */}
             </div>
             {/* Acaba container */}
-            
+
 
         </>
     );
