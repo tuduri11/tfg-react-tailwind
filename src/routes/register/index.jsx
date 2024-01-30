@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback } from "react";
 import useEffectWithoutFirstRun from '../../utils/useEffectWithoutFirstRun';
-import { calculateAge } from '../../utils/dateUtils';
+import { calculateAge, emailBase, nameBase, surnameBase } from '../../utils/dateUtils';
 import { SERVER_DNS } from '../../utils/constants';
 import ErrorMessage from '../../components/ErrorMessage'
 import { FiEye, FiEyeOff } from 'react-icons/fi';
@@ -207,7 +207,7 @@ export default function Index() {
             let universityValue = (selectedUniversity === "no-listed" || selectedUniversity === "no-university") ? null : selectedUniversity;
 
             console.log(universityValue)
-            let jsonData = { "email": email, "password": password, "name": nom, "surname": cognoms, "university": universityValue, "birthdate": data }
+            let jsonData = { "email": emailBase(email), "password": password, "name": nameBase(nom), "surname":surnameBase(cognoms), "university": universityValue, "birthdate": data }
             let response = fetch(`${SERVER_DNS}/accounts/register`,
                 {
                     method: 'POST',
@@ -321,7 +321,7 @@ export default function Index() {
                                             <input
                                                 type="text"
                                                 value={cognoms}
-                                                placeholder="Introduzca su nombre"
+                                                placeholder="Introduzca sus apellidos"
                                                 onChange={(e) => setCognoms(e.target.value)}
                                                 className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
                                             />

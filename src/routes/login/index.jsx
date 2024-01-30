@@ -8,6 +8,8 @@ import Cookies from 'js-cookie'
 import { isAuthenticated } from "../../session"
 import Navbar from "../../components/navbar"
 import { FiEye, FiEyeOff } from 'react-icons/fi';
+import dateUtils, { emailBase } from '../../utils/dateUtils'
+import { useAuth } from '../../utils/AuthContext';
 
 export default function Login() {
 
@@ -18,10 +20,12 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessages, setErrorMessages] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const { isLoggedIn, setIsLoggedIn } = useAuth();
   const navigate = useNavigate();
 
-  useEffect(() => { isAuthenticated().then(res => setIsLoggedIn(res)) }, []);
+  useEffect(() => {
+    isAuthenticated().then(res => setIsLoggedIn(res));
+}, [setIsLoggedIn]);
 
 
   async function handleSubmit(event) {
@@ -30,7 +34,7 @@ export default function Login() {
     if (!emailError && !passwordError) {
       setIsSubmitting(true)
       console.log('Submitted')
-      let jsonData = { "email": email, "password": password }
+      let jsonData = { "email":emailBase( email), "password": password }
       let response = fetch(`${SERVER_DNS}/accounts/login`,
         {
           method: 'POST',

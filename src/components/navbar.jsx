@@ -2,6 +2,7 @@ import React, { useState,useEffect } from 'react';
 import Dropdown from './dropdown';
 import { isAuthenticated } from '../session';
 import logo from "../assets/LogoMatematicas.png"
+import { useAuth } from '../utils/AuthContext';
 
 const defaultItems = [
     {
@@ -47,8 +48,10 @@ export default function Navbar() {
 
     const [isOpen, setIsOpen] = useState(false);
 
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
-    useEffect(() => { isAuthenticated().then(res => setIsLoggedIn(res)) }, [])
+    const { isLoggedIn, setIsLoggedIn } = useAuth();
+    useEffect(() => {
+        isAuthenticated().then(res => setIsLoggedIn(res));
+    }, [setIsLoggedIn]);
 
     //Si el usuario está loged se enseñan "Others items", sino se enseñan defaultItems.
 
@@ -93,7 +96,9 @@ export default function Navbar() {
                     {items.map((item, index) => (
                         <a
                             key={index}
-                            className="my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0"
+                            className={`my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0 ${
+                                item.anchor === "Ejercicios" ? "font-bold" : "" // Aplica la clase 'font-bold' al botón "Ejercicios"
+                            }`}
                             href={item.slug}
                         >
                             {item.anchor}

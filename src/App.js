@@ -14,27 +14,29 @@ import Premium from './routes/premium';
 import AboutUs from './routes/aboutUs';
 import Footer from './components/footer';
 import Navbar from './components/navbar';
+import { AuthProvider } from './utils/AuthContext';
 
 function App() {
   return (
-
-    <Router>
-      <div className="flex flex-col min-h-screen">
-      <Navbar></Navbar>
-      <div className="flex-grow">
-        <Routes>
-          <Route path="/" element={<Init />}></Route>
-          <Route path="/home" element={<Home />}></Route>
-          <Route path="/register" element={<Register />}></Route>
-          <Route path="/login" element={<Login />}></Route>
-          <Route path="/edit-profile" element={<EditProfile />}></Route>
-          <Route path="/premium" element={<Premium />}></Route>
-          <Route path="/about-us" element={<AboutUs />}></Route>
-        </Routes>
-      </div>
-      <Footer></Footer>
-      </div>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <div className="flex flex-col min-h-screen">
+          <Navbar></Navbar>
+          <div className="flex-grow">
+            <Routes>
+              <Route path="/" element={<Init />}></Route>
+              <Route path="/home" element={<Home />}></Route>
+              <Route path="/register" element={<Register />}></Route>
+              <Route path="/login" element={<Login />}></Route>
+              <Route path="/edit-profile" element={<EditProfile />}></Route>
+              <Route path="/premium" element={<Premium />}></Route>
+              <Route path="/about-us" element={<AboutUs />}></Route>
+            </Routes>
+          </div>
+          <Footer></Footer>
+        </div>
+      </Router>
+    </AuthProvider>
   );
 }
 export default App;
