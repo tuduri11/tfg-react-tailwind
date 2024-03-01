@@ -7,8 +7,8 @@ import { FiEye, FiEyeOff } from 'react-icons/fi';
 import React from 'react';
 import { Routes, Route, useNavigate, redirect } from 'react-router-dom'
 import { useAuth } from '../../utils/AuthContext';
-import Cookies from 'js-cookie'
-import { isAuthenticated } from "../../session"
+import Cookies from 'js-cookie';
+import { isAuthenticated } from "../../session";
 
 
 export default function Index() {
@@ -469,7 +469,7 @@ export default function Index() {
                                                     onClick={validateParameters}
                                                     disabled={emailError || passwordError || nomError || cognomsError || dataError || universityError}
                                                 >
-                                                    <span>Entrar</span>
+                                                    <span>Regístrame</span>
                                                 </button>
                                                 <div className="grid grid-cols-2 gap-2">
                                                 </div>

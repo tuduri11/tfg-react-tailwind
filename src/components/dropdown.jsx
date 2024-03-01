@@ -14,7 +14,7 @@ export default function Dropdown() {
 
 
   const navigateToPerfil = () => {
-    navigate('/edit-perfil');
+    navigate('/edit-profile');
   };
   async function logOut() {
     let access = await getAccessToken()

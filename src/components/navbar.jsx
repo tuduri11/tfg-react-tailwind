@@ -1,7 +1,7 @@
 import React, { useState,useEffect } from 'react';
 import Dropdown from './dropdown';
 import { isAuthenticated } from '../session';
-import logo from "../assets/LogoMatematicas.png"
+import logo from "../assets/MathCampus-logos_transparent_navbar.png"
 import { useAuth } from '../utils/AuthContext';
 
 const defaultItems = [
@@ -71,7 +71,7 @@ export default function Navbar() {
             <div className="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
                 <div className="flex items-center justify-between">
                     <a href="/">
-                    <img className="w-auto h-8 sm:h-10" src={logo} alt="Logo" />
+                    <img className="w-auto h-12 sm:h-15" src={logo} alt="Logo" />
                     </a>
 
                     {/* Mobile menu button */}

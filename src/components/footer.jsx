@@ -1,5 +1,5 @@
 import React from 'react';
-import logo from '../assets/LogoMatematicas.png'
+import logo from '../assets/MathCampus-logos_transparent.png'
 
 export default function Footer() {
     return (
@@ -7,7 +7,7 @@ export default function Footer() {
             <div className="container px-6 py-8 mx-auto">
                 <div className="flex flex-col items-center text-center">
                     <a href="/">
-                        <img className="w-auto h-7" src={logo} alt="Logo" />
+                        <img className="w-auto h-56" src={logo} alt="Logo" />
                     </a>
 
                     <div className="flex flex-wrap justify-center mt-6 -mx-4">
@@ -21,7 +21,7 @@ export default function Footer() {
 
                 <div className="flex flex-col items-center sm:flex-row sm:justify-between">
                     <p className="text-sm text-gray-500 dark:text-gray-300">
-                        © Copyright 2023. All Rights Reserved.
+                        © Copyright 2024. All Rights Reserved.
                     </p>
 
                     <div className="flex -mx-2">

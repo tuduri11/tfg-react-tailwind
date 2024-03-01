@@ -172,7 +172,7 @@ export default function Login() {
                         onClick={validateParameters}
                         isDisabled={emailError || passwordError}
                       >
-                        <span>Entrar</span>
+                        Entrar
                       </button>
                       <div className="grid grid-cols-2 gap-2">
                       </div>
