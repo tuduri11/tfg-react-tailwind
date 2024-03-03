@@ -1,6 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useCallback } from "react";
-import {  useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { useLocalStorage } from '../../utils/localStorage'
 import useEffectWithoutFirstRun from '../../utils/useEffectWithoutFirstRun';
 import { getAccessToken } from '../../session';
@@ -8,6 +8,7 @@ import { SERVER_DNS } from "../../utils/constants";
 import ErrorMessage from '../../components/ErrorMessage';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import SuccessMessage from '../../components/SuccessMessage';
+import MathySymbol from '../../components/MathySymbol';
 
 export default function EditProfile() {
     const [products, setProducts] = useState();
@@ -23,6 +24,8 @@ export default function EditProfile() {
     const [universities, setUniversities] = useState([]);
 
     const [data, setData] = useState('');
+
+    const [mathys, setMathys] = useState('');
 
 
     const [oldPassword, setOldPassword] = useState('');
@@ -53,6 +56,7 @@ export default function EditProfile() {
         setEmail(res.email);
         setData(res.birthdate);
         setPremium(res.premium)
+        setMathys(res.mathys)
     }
     useEffectWithoutFirstRun(() => { initializeStateFromResponse(products) }, [products])
 
@@ -221,24 +225,77 @@ export default function EditProfile() {
         <div className="mx-auto min-h-screen w-full min-w-[320px] flex flex-col bg-gray-100 dark:bg-gray-900 dark:text-gray-100">
             <main className="flex flex-col max-w-full flex-auto ">
                 <div className="mx-auto flex flex-col w-full max-w-4xl items-center justify-center overflow-hidden p-4 lg:p-8">
-                    <section className="w-full max-w-xl py-6">
+                    <section className=" w-full max-w-xl mx-auto py-6">
                         <header className="mb-10 text-center">
-                            <h1 className="mb-2 inline-flex items-center space-x-2 text-2xl font-bold">
+                            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
                                 Mi Perfil
                             </h1>
                         </header>
 
-                        <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800 dark:text-gray-100 p-5 md:px-16 md:py-12 space-y-4">
-                            <p><strong>Email</strong> {email}</p>
-                            <p><strong>Nombre</strong> {nom}</p>
-                            <p><strong>Apellidos</strong> {cognoms}</p>
-                            <p><strong>Universidad</strong> {universities ? universities : "No Voy/Aparece la universidad"}</p>
-                            <p><strong>Fecha de cumpleaños</strong> {data}</p>
-                            
-                        </div>
+                        <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
+                            <div className="p-5 md:p-8">
+                                <div className="grid grid-cols-1 gap-6">
+                                    <div className="flex items-center space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-slate-400 flex items-center justify-center">
+                                                <span className="text-xl text-white">@</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow">
+                                            <p className="text-gray-900 dark:text-gray-100"><strong>Email:</strong> {email}</p>
+                                        </div>
+                                    </div>
 
+                                    <div className="flex items-center space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-slate-400 flex items-center justify-center">
+                                                <span className="text-xl text-white">&#128100;</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow">
+                                            <p className="text-gray-900 dark:text-gray-100"><strong>Nombre Completo:</strong> {nom} {cognoms}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-slate-400 flex items-center justify-center">
+                                                <span className="text-xl text-white">&#127891;</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow">
+                                            <p className="text-gray-900 dark:text-gray-100"><strong>Universidad:</strong> {universities ? universities.name : "No especificado"}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-slate-400 flex items-center justify-center">
+                                                <span className="text-xl text-white">&#128197;</span>
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow">
+                                            <p className="text-gray-900 dark:text-gray-100"><strong>Fecha de cumpleaños:</strong> {data}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex items-center space-x-4">
+                                        <div className="flex-shrink-0">
+                                            <div className="h-10 w-10 rounded-full bg-slate-400 flex items-center justify-center">
+                                                <MathySymbol />
+                                            </div>
+                                        </div>
+                                        <div className="flex-grow">
+                                            <p className="text-gray-900 dark:text-gray-100"><strong>Mathys:</strong> {mathys}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </section>
-            
+
+
+
 
                     <section className="w-full max-w-xl py-6">
                         <header className="mb-10 text-center">
@@ -249,6 +306,7 @@ export default function EditProfile() {
                             {premium ? (
                                 <div className="text-center">
                                     <p>Eres un usuario premium. ¡Muchas gracias por tu apoyo!</p>
+                                    <p>Tus tokens: </p>
                                     <button className="mt-4 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-black uppercase transition bg-gray-400 rounded-full shadow ripple waves-light hover:shadow-lg focus:outline-none hover:bg-gray-500">
                                         Cancelar suscripción
                                     </button>

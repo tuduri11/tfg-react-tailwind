@@ -16,6 +16,11 @@ export default function Dropdown() {
   const navigateToPerfil = () => {
     navigate('/edit-profile');
   };
+
+  const navigateToLogin = () => {
+    navigate('/login');
+  };
+
   async function logOut() {
     let access = await getAccessToken()
     let response = fetch(`${SERVER_DNS}/accounts/logout`,
@@ -41,7 +46,7 @@ export default function Dropdown() {
       Cookies.remove('refresh_token')
       setIsSubmitting(false)
       //Si el logout es correcto, nos redirige al login otra vez.
-      navigate('/login')
+      navigateToLogin()
     }
     else {
       setErrorMessages(msg)
@@ -72,7 +77,7 @@ export default function Dropdown() {
                 className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
                 onClick={navigateToPerfil} // Vinculando el evento onClick
               >
-                Editar perfil
+                Tu perfil
               </button>
             </Menu.Item>
             {/* Repite esto para cada Menu.Item */}

@@ -20,12 +20,18 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessages, setErrorMessages] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
   const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { fetchMathys } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
     isAuthenticated().then(res => setIsLoggedIn(res));
-}, [setIsLoggedIn]);
+  }, [setIsLoggedIn]);
+
+  const navigateToHome = () => {
+    navigate('/home');
+  };
 
 
   async function handleSubmit(event) {
@@ -34,7 +40,7 @@ export default function Login() {
     if (!emailError && !passwordError) {
       setIsSubmitting(true)
       console.log('Submitted')
-      let jsonData = { "email":emailBase( email), "password": password }
+      let jsonData = { "email": emailBase(email), "password": password }
       let response = fetch(`${SERVER_DNS}/accounts/login`,
         {
           method: 'POST',
@@ -62,7 +68,8 @@ export default function Login() {
         const expires = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
         Cookies.set('access_token', access, { expires: expires, sameSite: 'Lax' })
         Cookies.set('refresh_token', refresh, { sameSite: 'Lax' })
-        navigate('/home');
+        await fetchMathys()
+        navigateToHome()
       }
       else {
         setErrorMessages(msg)
@@ -98,7 +105,7 @@ export default function Login() {
 
   return (
     <>
-      
+
       {/* Pages: Sign In: Boxed */}
 
       {/* Page Container */}
