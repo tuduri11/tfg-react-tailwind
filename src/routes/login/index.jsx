@@ -21,7 +21,7 @@ export default function Login() {
   const [errorMessages, setErrorMessages] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { isLoggedIn, setIsLoggedIn } = useAuth();
+  const { isLoggedIn, setIsLoggedIn, setIsPremium } = useAuth();
   const { fetchMathys } = useAuth();
   const navigate = useNavigate();
 
@@ -59,12 +59,15 @@ export default function Login() {
           setErrorMessages('Something went wrong')
         })
 
-      const { success, msg, refresh, access } = await response
+      const { success, msg, refresh, access, is_premium } = await response
       // const {success, msg, token} = await response
       setIsSubmitting(false)
       if (success) {
+        setEmail(emailBase(email))
         //localStorage.setItem('csrftoken',token)
         setIsLoggedIn(true)
+        //Ahora sabremos en todo momento si el usuario es premium o no.
+        setIsPremium(is_premium)
         const expires = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
         Cookies.set('access_token', access, { expires: expires, sameSite: 'Lax' })
         Cookies.set('refresh_token', refresh, { sameSite: 'Lax' })
@@ -174,7 +177,7 @@ export default function Login() {
                     <div>
                       <button
                         type="submit"
-                        className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
+                        className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100"
                         isLoading={isSubmitting}
                         onClick={validateParameters}
                         isDisabled={emailError || passwordError}

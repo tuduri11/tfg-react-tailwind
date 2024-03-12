@@ -2,13 +2,15 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import { isAuthenticated, getAccessToken } from '../session';
 import { SERVER_DNS } from './constants';
+import { useLocalStorage } from './localStorage';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [mathys, setMathys] = useState(0);
-    
+
+    const [isPremium, setIsPremium] = useLocalStorage('isPremium', false);
 
     useEffect(() => {
         isAuthenticated()
@@ -69,7 +71,7 @@ export const AuthProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, mathys, fetchMathys, updateMathys }}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, mathys, fetchMathys, updateMathys, isPremium, setIsPremium }}>
             {children}
         </AuthContext.Provider>
     );

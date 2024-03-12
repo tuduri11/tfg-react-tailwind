@@ -9,6 +9,8 @@ import { Routes, Route, useNavigate, redirect } from 'react-router-dom'
 import { useAuth } from '../../utils/AuthContext';
 import Cookies from 'js-cookie';
 import { isAuthenticated } from "../../session";
+import { useLocalStorage } from '../../utils/localStorage'
+
 
 
 export default function Index() {
@@ -16,7 +18,7 @@ export default function Index() {
     const [show, setShow] = useState(false)
     const handleClick = () => setShow(!show)
 
-    const [email, setEmail] = useState('');
+    const [email, setEmail] = useLocalStorage('email', '');
     const [emailError, setEmailError] = useState(false);
     const [emailErrorMessage, setEmailErrorMessage] = useState('')
 
@@ -51,6 +53,8 @@ export default function Index() {
     const [isRegistered, setIsRegistered] = useState(false);
 
     const { isLoggedIn, setIsLoggedIn } = useAuth();
+    const { setIsPremium } = useAuth();
+    const { fetchMathys } = useAuth();
 
     useEffect(() => {
         isAuthenticated().then(res => setIsLoggedIn(res));
@@ -82,7 +86,7 @@ export default function Index() {
         if (nom === '') {
             setNameErrorMessages('El nombre es necesario');
             setNomError(true);
-        } else if (nom.match(/^[A-Za-z]+$/) === null) {
+        } else if (nom.match(/^[A-Za-zñÑçÇáéíóúÁÉÍÓÚüÜ]+$/) === null) {
             setNameErrorMessages('El nombre solo puede tener letras sin espacios');
             setNomError(true);
         } else {
@@ -97,7 +101,7 @@ export default function Index() {
         if (cognoms === '') {
             setCognomsErrorMessages('Los apellidos son necesarios');
             setCognomsError(true);
-        } else if (cognoms.match(/[0-9]+/) != null) {
+        } else if (cognoms.match(/^[A-Za-zñÑçÇáéíóúÁÉÍÓÚüÜ\s]+$/) === null) {
             setCognomsErrorMessages('Formato incorrecto');
             setCognomsError(true);
         } else {
@@ -188,6 +192,18 @@ export default function Index() {
         navigate('/login');
 
     };
+    const navigateToPremium = () => {
+        navigate('/premium');
+
+    };
+
+    const navigateToPerfil = ()=> {
+        navigate('/edit-profile');
+    }
+
+    const navigateToHome = ()=> {
+        navigate('/home');
+    }
 
     //Obtenemos las universidades a través de la base de datos
     useEffect(() => {
@@ -203,7 +219,7 @@ export default function Index() {
             });
     }, []);
     //Si el registro es correcto, iniciamos sesion directamente. En teoria no debe haber errores.
-    async function login(email,password) {
+    async function login(email, password) {
         setErrorMessages('')
         if (!emailError && !passwordError) {
             setIsSubmitting(true)
@@ -227,15 +243,18 @@ export default function Index() {
                     setErrorMessages('Something went wrong')
                 })
 
-            const { success, msg, refresh, access } = await response
+            const { success, msg, refresh, access, is_premium } = await response
             // const {success, msg, token} = await response
             setIsSubmitting(false)
             if (success) {
                 //localStorage.setItem('csrftoken',token)
+                setEmail(emailBase(email))
                 setIsLoggedIn(true)
+                setIsPremium(is_premium)
                 const expires = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
                 Cookies.set('access_token', access, { expires: expires, sameSite: 'Lax' })
                 Cookies.set('refresh_token', refresh, { sameSite: 'Lax' })
+                await fetchMathys()
             }
             else {
                 setErrorMessages(msg)
@@ -279,7 +298,7 @@ export default function Index() {
                 setIsSubmitting(false)
                 if (success) {
                     setIsRegistered(true)
-                    await login(email,password);
+                    await login(email, password);
 
                 }
                 else {
@@ -326,19 +345,25 @@ export default function Index() {
                                 <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800 dark:text-gray-100">
                                     <div className="grow p-5 md:px-16 md:py-12">
                                         <div className="text-center">
-                                            <p className="text-lg font-semibold">¡Bienvenido {nom}! Muchas gracias por registrarte en nuestra página web.</p>
+                                            <p className="text-lg font-semibold">¡Bienvenid@ {nom}! Muchas gracias por registrarte en MathCampus.</p>
 
                                             <div className="mt-4 flex justify-center space-x-4">
                                                 <button
-                                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                                    onClick={() => navigate('/edit-perfil')}
+                                                    className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-48 h-12"
+                                                    onClick={navigateToPerfil}
                                                 >
-                                                    Editar Perfil
+                                                    Ver Perfil
+                                                </button>
+                                                <button
+                                                    className="text-white font-bold tracking-wide transition duration-200 rounded shadow-md bg-gradient-to-r from-purple-500 to-purple-700 hover:bg-purple-600 focus:shadow-outline focus:outline-none w-48 h-12"
+                                                    onClick={navigateToPremium}
+                                                >
+                                                    Ser Premium
                                                 </button>
 
                                                 <button
-                                                    className="inline-flex items-center justify-center space-x-2 rounded-lg border border-gray-200 bg-white px-7 py-3.5 font-semibold leading-6 text-gray-800 hover:border-gray-300 hover:text-gray-900 hover:shadow-sm focus:ring focus:ring-gray-300 focus:ring-opacity-25 active:border-gray-200 active:shadow-none dark:border-gray-700 dark:bg-transparent dark:text-gray-300 dark:hover:border-gray-600 dark:hover:text-gray-200 dark:focus:ring-gray-600 dark:focus:ring-opacity-40 dark:active:border-gray-700"
-                                                    onClick={() => navigate('/home')}
+                                                    className="rounded-lg bg-white font-semibold leading-6 text-gray-800 hover:border-gray-300 hover:text-gray-900 hover:shadow-sm focus:ring focus:ring-gray-300 focus:ring-opacity-25 active:border-gray-200 active:shadow-none w-48 h-12"
+                                                    onClick={navigateToHome}
                                                 >
                                                     Inicio
                                                 </button>
@@ -464,7 +489,7 @@ export default function Index() {
                                             <div>
                                                 <button
                                                     type="submit"
-                                                    className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
+                                                    className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100"
                                                     isLoading={isSubmitting}
                                                     onClick={validateParameters}
                                                     disabled={emailError || passwordError || nomError || cognomsError || dataError || universityError}

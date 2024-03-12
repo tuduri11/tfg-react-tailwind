@@ -9,8 +9,13 @@ import ErrorMessage from '../../components/ErrorMessage';
 import { FiEye, FiEyeOff } from 'react-icons/fi';
 import SuccessMessage from '../../components/SuccessMessage';
 import MathySymbol from '../../components/MathySymbol';
+import { useAuth } from '../../utils/AuthContext';
+import ConfirmationModal from '../../components/confirmation_modal';
 
 export default function EditProfile() {
+
+
+
     const [products, setProducts] = useState();
 
     const [premium, setPremium] = useState('')
@@ -27,6 +32,8 @@ export default function EditProfile() {
 
     const [mathys, setMathys] = useState('');
 
+    const { isPremium, setIsPremium } = useAuth();
+
 
     const [oldPassword, setOldPassword] = useState('');
     const [showoldPassword, setShowoldPassword] = useState(false);
@@ -42,12 +49,29 @@ export default function EditProfile() {
 
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
+    const [showSuccessMessageCancel, setShowSuccessMessageCancel] = useState(false);
+    const [SuccesMessageCancel, setSuccesMessageCancel]= useState('');
+
+    const [showFailMessageCancel, setShowFailMessageCancel] = useState(false);
+    const [FailMessageCancel, setFailMessageCancel]= useState('');
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    // Función para manejar la confirmación del modal
+    const handleModalConfirm = () => {
+        handleCancelSubscription();
+        setIsModalOpen(false); // Cierra el modal después de confirmar
+    };
+    // Función para cerrar el modal sin realizar ninguna acción
+    const handleModalClose = () => {
+        setIsModalOpen(false);
+    };
+
+
     const navigate = useNavigate();
     const navigateToPremium = () => {
         navigate('/premium');
 
     };
-
 
     function initializeStateFromResponse(res) {
         setNom(res.name);
@@ -55,6 +79,8 @@ export default function EditProfile() {
         setUniversities(res.university);
         setEmail(res.email);
         setData(res.birthdate);
+        //Local premium
+        setIsPremium(res.premium);
         setPremium(res.premium)
         setMathys(res.mathys)
     }
@@ -216,6 +242,35 @@ export default function EditProfile() {
         }
     };
 
+    //Para cancelar la subscripción
+    const handleCancelSubscription = async () => {
+        setShowSuccessMessageCancel(false);
+        setShowFailMessageCancel(false);
+        try {
+            let token = await getAccessToken();
+            let response = await fetch(`${SERVER_DNS}/accounts/cancel-subscription`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data.success) {
+                setIsPremium(false);
+                //Ahora podrá aparecer el mensaje de success
+                setShowSuccessMessageCancel(true);
+                setSuccesMessageCancel(data.msg)
+                
+            } else {
+                setShowFailMessageCancel(true)
+                setFailMessageCancel(data.msg)
+            }
+        } catch (error) {
+            console.error('Error al cancelar la suscripción:', error);
+        }
+    };
+    
 
 
     useEffectWithoutFirstRun(validateNewPassword, [newPassword])
@@ -303,24 +358,41 @@ export default function EditProfile() {
                         </header>
                         <div className="flex flex-col overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-800 dark:text-gray-100 p-5 md:px-16 md:py-12 space-y-4">
                             {/* Condición para verificar si el usuario es premium */}
-                            {premium ? (
+                            {isPremium ? (
                                 <div className="text-center">
-                                    <p>Eres un usuario premium. ¡Muchas gracias por tu apoyo!</p>
-                                    <p>Tus tokens: </p>
-                                    <button className="mt-4 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-black uppercase transition bg-gray-400 rounded-full shadow ripple waves-light hover:shadow-lg focus:outline-none hover:bg-gray-500">
+                                    <p>Eres un usuario premium.</p>
+                                    <div className="flex justify-center items-center space-x-2">
+                                        <span className="text-white font-bold">{mathys}</span>
+                                        <MathySymbol />
+                                    </div>
+                                    <button className="mt-4 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-black uppercase transition bg-gray-400 rounded-full shadow ripple waves-light hover:shadow-lg focus:outline-none duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 hover:bg-gray-500"
+                                        onClick={() => setIsModalOpen(true)}>
                                         Cancelar suscripción
                                     </button>
+                                    {/* ConfirmationModal colocado al final del return de tu componente */}
+                                    <ConfirmationModal
+                                        isOpen={isModalOpen}
+                                        onClose={handleModalClose}
+                                        onConfirm={handleModalConfirm}
+                                        title="Cancelar Suscripción"
+                                        description="¿Estás seguro de que deseas cancelar tu suscripción?"
+                                    />
                                 </div>
                             ) : (
 
                                 <div className="text-center">
                                     <p>No eres un usuario premium.</p>
                                     {/* Botón para hacerse premium. */}
-                                    <button onClick={navigateToPremium} className="mt-4 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-blue-700 rounded-full shadow ripple waves-light hover:shadow-lg focus:outline-none hover:bg-blue-600">
+                                    <button onClick={navigateToPremium} className="mt-4 inline-block px-6 py-2 text-xs font-medium leading-6 text-center text-white uppercase transition bg-blue-700 rounded-full shadow ripple waves-light hover:shadow-lg focus:outline-none duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 hover:bg-blue-600">
                                         Hazte premium
                                     </button>
                                 </div>
                             )}
+                            {/*Si todo va correctamente, enviamos mensaje de confirmación con el componente SuccessMessageCancel*/}
+                            {showSuccessMessageCancel && <SuccessMessage message={SuccesMessageCancel} />}
+                            
+                            {/*Si hay algun error enviado desde backend: */}
+                            {showFailMessageCancel && <ErrorMessage message={FailMessageCancel} />}
                         </div>
 
                     </section>
@@ -382,7 +454,7 @@ export default function EditProfile() {
 
                             <button
                                 type="submit"
-                                className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90"
+                                className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
                                 //Al clickar, validamos las dos contraseñas
                                 onClick={validatePasswords}
                                 //Si hay algun error, no se puede pulsar el boton
