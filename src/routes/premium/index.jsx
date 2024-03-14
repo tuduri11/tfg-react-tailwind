@@ -66,7 +66,7 @@ export default function Premium() {
               </p>
             )}
             <p className="mt-2 text-sm text-gray-600">
-              *Cada Mathy es una llamada a ChatGPT o una solución de un ejercicio.
+              *Cada Mathy es una llamada a Chathy o una solución de un ejercicio.
             </p>
           </div>
           <div className=" bg-gray-300 flex flex-col justify-between p-5  border rounded-lg shadow-lg">
@@ -113,7 +113,7 @@ export default function Premium() {
             )}
 
             <p className="mt-2 text-sm text-gray-600">
-              *Cada Mathy es una llamada a ChatGPT o una solución de un ejercicio.
+              *Cada Mathy es una llamada a Chathy o una solución de un ejercicio.
             </p>
           </div>
         </div>

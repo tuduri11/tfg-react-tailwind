@@ -1,6 +1,5 @@
 import { Fragment, useState } from 'react';
 import { Menu, Transition } from '@headlessui/react';
-import { UserIcon } from '@heroicons/react/20/solid';
 import { getAccessToken, getRefreshToken } from "../session"
 import Cookies from 'js-cookie'
 import { SERVER_DNS } from '../utils/constants';
@@ -45,6 +44,7 @@ export default function Dropdown() {
       Cookies.remove('access_token')
       Cookies.remove('refresh_token')
       setIsSubmitting(false)
+      localStorage.removeItem('chatMessages');
       //Si el logout es correcto, nos redirige al login otra vez.
       navigateToLogin()
     }
