@@ -202,7 +202,7 @@ export default function Index() {
     }
 
     const navigateToHome = ()=> {
-        navigate('/home');
+        navigate('/universidades');
     }
 
     //Obtenemos las universidades a través de la base de datos

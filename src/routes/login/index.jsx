@@ -30,7 +30,7 @@ export default function Login() {
   }, [setIsLoggedIn]);
 
   const navigateToHome = () => {
-    navigate('/home');
+    navigate('/universidades');
   };
 
 

@@ -7,7 +7,7 @@ import MathySymbol from './MathySymbol';
 
 const defaultItems = [
     {
-        slug: "/home/",
+        slug: "/universidades/",
         anchor: "Ejercicios"
     },
     {
@@ -30,7 +30,7 @@ const defaultItems = [
 ];
 const otherItems = [
     {
-        slug: "/home/",
+        slug: "/universidades/",
         anchor: "Ejercicios"
     },
     {
@@ -68,7 +68,7 @@ export default function Navbar() {
         <nav className="opacity-4 relative bg-white shadow dark:bg-gray-800">
             <div className="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
                 <div className="flex items-center justify-between">
-                    <a href="/">
+                    <a href="/universidades">
                         <img className="w-auto h-12 sm:h-15" src={logo} alt="Logo" />
                     </a>
 

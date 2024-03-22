@@ -6,12 +6,12 @@ export default function Footer() {
         <footer className=" w-full bg-white dark:bg-gray-900" >
             <div className="container px-6 py-8 mx-auto">
                 <div className="flex flex-col items-center text-center">
-                    <a href="/">
+                    <a href="/universidades">
                         <img className="w-auto h-56" src={logo} alt="Logo" />
                     </a>
 
                     <div className="flex flex-wrap justify-center mt-6 -mx-4">
-                        <a href="/home" className="mx-4 text-sm text-gray-600 transition-colors duration-300 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400" aria-label="Reddit"> Home </a>
+                        <a href="/universidades" className="mx-4 text-sm text-gray-600 transition-colors duration-300 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400" aria-label="Reddit"> Home </a>
 
                         <a href="/about-us" className="mx-4 text-sm text-gray-600 transition-colors duration-300 hover:text-blue-500 dark:text-gray-300 dark:hover:text-blue-400" aria-label="Reddit"> About </a>
                     </div>

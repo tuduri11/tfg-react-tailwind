@@ -74,7 +74,7 @@ export default function AfterPay() {
                                     Ahora eres premium. Gracias por apoyar nuestro servicio.
                                 </p>
                                 <button
-                                    onClick={() => navigate('/home')}
+                                    onClick={() => navigate('/universidades')}
                                     className="inline-flex items-center justify-center px-8 py-3 font-semibold rounded-lg text-white bg-gradient-to-r from-teal-500 to-teal-700 hover:bg-teal-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 max-w-xs"
                                 >
                                     Empezar!
@@ -94,7 +94,7 @@ export default function AfterPay() {
                                             Intentar de nuevo
                                         </button>
                                         <button
-                                            onClick={() => navigate('/home')}
+                                            onClick={() => navigate('/')}
                                             className="mt-8 px-8 py-3 font-semibold bg-slate-400  text-white rounded transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110 hover:bg-gray-700"
                                         >
                                             Ir al inicio
