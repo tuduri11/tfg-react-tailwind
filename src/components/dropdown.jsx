@@ -22,11 +22,11 @@ export default function Dropdown() {
 
   async function logOut() {
     let access = await getAccessToken()
-    let response = fetch(`${SERVER_DNS}/accounts/logout`,
+    let response = await fetch(`${SERVER_DNS}/accounts/logout`,
       {
         method: 'POST',
         mode: 'cors',
-        body: { 'access': access, 'refresh': getRefreshToken() },
+        body: JSON.stringify({ 'access': access, 'refresh': getRefreshToken() }),
         headers: {
           'Authorization': `Bearer ${access}`,
           'Content-Type': 'application/json',

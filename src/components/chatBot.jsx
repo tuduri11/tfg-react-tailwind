@@ -137,8 +137,16 @@ export default function ChatBot() {
                     </div>
                 </div>
             ) : (
-                <button onClick={() => setIsExpanded(true)} className="text-white bg-blue-400 rounded-full p-3 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-150 ease-in-out mb-3">
-                    <TbRobot size="33" /> 
+                <button onClick={() => {
+                    setIsExpanded(true);
+                    // Agrega un pequeño retraso para asegurar que el estado se haya actualizado y el chat esté visible
+                    setTimeout(() => {
+                        if (lastMessageRef.current) {
+                            lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+                        }
+                    }, 100);
+                }} className="text-white bg-blue-400 rounded-full p-3 hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transition duration-150 ease-in-out mb-3">
+                    <TbRobot size="33" />
                 </button>
             )}
         </div>

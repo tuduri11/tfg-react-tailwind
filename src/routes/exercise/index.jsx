@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../components/BackButton'
 import NotFoundComponent from '../../components/NotFoundComponent';
-
+import ChatBot
+ from '../../components/chatBot';
 export default function Exercise() {
 
     const { problemSlug } = useParams();
@@ -65,6 +66,10 @@ export default function Exercise() {
 
                 </div>
             </div>
+            <div className='text-black'>
+            <ChatBot></ChatBot>
+            </div>
+            
         </div>
 
     );

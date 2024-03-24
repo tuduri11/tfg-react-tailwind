@@ -19,7 +19,6 @@ import UniversityList from './components/UniversityList';
 import CareerList from './components/CareerList';
 import SubjectList from './components/SubjectList';
 import TopicList from './components/TopicList';
-import ChatBot from './components/chatBot';
 import NotFoundPage from './components/NotFoundPage';
 import ProblemList from './components/ProblemList';
 import Exercise from './routes/exercise';
@@ -48,7 +47,6 @@ function App() {
               <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug/:topicSlug/:problemSlug" element={<Exercise />} />
             </Routes>
           </div>
-          <ChatBot></ChatBot>
           <Footer></Footer>
         </div>
       </Router>
