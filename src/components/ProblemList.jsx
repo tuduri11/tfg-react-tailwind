@@ -4,52 +4,52 @@ import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from './BackButton'
 import NotFoundComponent from './NotFoundComponent';
 
-export default function CareerList() {
-    const { universitySlug } = useParams();
-    const [careers, setCareers] = useState([]);
+export default function ProblemList() {
+    const { universitySlug, careerSlug, subjectSlug, topicSlug} = useParams();
+    const [problems, setProblems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
     const [notFound, setNotFound] = useState(false);
     const navigate = useNavigate();
 
-    // Cargar carreras cuando se selecciona una universidad
+    // Cargar problemas cuando se selecciona un topic
     useEffect(() => {
         setLoading(true)
-        fetch(`${SERVER_DNS}/education/${universitySlug}/careers`)
+        fetch(`${SERVER_DNS}/education/${topicSlug}/problems`)
             .then((response) => {
                 if (!response.ok) {
                     if (response.status === 404) {
                         setNotFound(true)
-                        throw new Error('Universidad no encontrada')
+                        throw new Error('Tema no encontrado')
                     }
-                    throw new Error('Failed to load careers')
+                    throw new Error('Failed to load problems')
                 }
-                return response.json();
+                return response.json()
             })
             .then((data) => {
                 if (data.success) {
-                    setCareers(data.careers)
+                    setProblems(data.problems)
                 } else {
-                    throw new Error('Failed to load careers')
+                    throw new Error('Failed to load problems')
                 }
 
             })
             .catch((error) => {
-                console.error('Error fetching careers:', error)
+                console.error('Error fetching problems:', error)
                 setErrorMessage(error.toString())
 
             })
             .finally(() => setLoading(false))
-    }, [universitySlug]);
+    }, [topicSlug]);
 
-    const handleSelectCareer = (careerSlug) => {
+    const handleSelectProblem = (problemSlug) => {
         // Navega a la ruta de la carrera seleccionada
-        navigate(`/universidades/${universitySlug}/${careerSlug}`)
+        navigate(`/universidades/${universitySlug}/${careerSlug}/${subjectSlug}/${topicSlug}/${problemSlug}`);
     };
 
     if (loading) return <div>Loading...</div>;
     if (notFound) {
-        return <NotFoundComponent message="Universidad no encontrada" />;
+        return <NotFoundComponent message="Tema no encontrado" />;
     }
 
     if (errorMessage) {
@@ -62,15 +62,15 @@ export default function CareerList() {
                 <div className="mb-4">
                     <BackButton />
                 </div>
-                <h2 className="text-lg font-semibold mb-4">Select a Career:</h2>
+                <h2 className="text-lg font-semibold mb-4">Select a Problem:</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {careers.map((career) => (
+                    {problems.map((problem) => (
                         <div
-                            key={career.id}
+                            key={problem.id}
                             className="cursor-pointer p-4 border border-gray-200 rounded hover:bg-gray-700"
-                            onClick={() => handleSelectCareer(career.slug)}
+                            onClick={() => handleSelectProblem(problem.slug)}
                         >
-                            <h3 className="text-md font-semibold">{career.name}</h3>
+                            <h3 className="text-md font-semibold">{problem.name}</h3>
                         </div>
                     ))}
                 </div>

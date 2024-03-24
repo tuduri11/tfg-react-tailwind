@@ -2,51 +2,63 @@ import { SERVER_DNS } from '../utils/constants';
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import BackButton from './BackButton';
+import NotFoundComponent from './NotFoundComponent';
 
-export default function SubjectList() {
+export default function TopicList() {
     const { universitySlug, careerSlug } = useParams();
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [notFound, setNotFound] = useState(false);
 
     // Cargar asignaturas cuando se selecciona una carrera
     useEffect(() => {
-        if (!careerSlug) {
-            setLoading(false);
-            return;
-        }
         setLoading(true)
-        fetch(`${SERVER_DNS}/education/universities/careers/${careerSlug}/subjects`)
-            .then((response) => response.json())
+        fetch(`${SERVER_DNS}/education/${careerSlug}/subjects`)
+            .then((response) => {
+                if (!response.ok) {
+                    if (response.status === 404) {
+                        setNotFound(true)
+                        throw new Error('Carrera no encontrada')
+                    }
+                    throw new Error('Failed to load subjects')
+                }
+                return response.json()
+            })
             .then((data) => {
                 if (data.success) {
                     setSubjects(data.subjects)
-                    setLoading(false)
-                }
-                else {
-                    setError('Failed to load subjects')
+                } else {
+                    throw new Error('Failed to load subjects')
                 }
             })
             .catch((error) => {
                 console.error('Error fetching subjects:', error)
-                setError('Error fetching subjects')
-                setLoading(false)
-            });
+                setErrorMessage(error.toString())
+            })
+            .finally(() => setLoading(false));
     }, [careerSlug]);
-
-    if (loading) return <div>Loading subjects...</div>;
-    if (error) return <div>Error: {error}</div>;
 
     const handleSelectSubject = (subjectSlug) => {
         // Navega a la ruta de la asignatura seleccionada
         navigate(`/universidades/${universitySlug}/${careerSlug}/${subjectSlug}`);
     };
 
+    if (loading) return <div>Loading...</div>;
+    if (notFound) {
+        return <NotFoundComponent message="Carrera no encontrada" />;
+    }
+
+    if (errorMessage) {
+        return <div>Error: {errorMessage}</div>;
+    }
+
+
     return (
         <div id="page-container" className="text-white mx-auto flex min-h-dvh w-full min-w-[320px] flex-col bg-gray-100 dark:bg-gray-900">
             <div className="p-4">
-            <div className="mb-4">
+                <div className="mb-4">
                     <BackButton />
                 </div>
                 <h2 className="text-lg font-semibold mb-4">Select a Subject:</h2>

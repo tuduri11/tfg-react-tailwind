@@ -18,7 +18,11 @@ import AfterPay from './routes/afterPay/index';
 import UniversityList from './components/UniversityList';
 import CareerList from './components/CareerList';
 import SubjectList from './components/SubjectList';
+import TopicList from './components/TopicList';
 import ChatBot from './components/chatBot';
+import NotFoundPage from './components/NotFoundPage';
+import ProblemList from './components/ProblemList';
+import Exercise from './routes/exercise';
 
 function App() {
   return (
@@ -28,6 +32,7 @@ function App() {
           <Navbar></Navbar>
           <div className="flex-grow">
             <Routes>
+              <Route path="*" element={<NotFoundPage />} />
               <Route path="/" element={<Init />}></Route>
               <Route path="/universidades" element={<UniversityList />}></Route>
               <Route path="/register" element={<Register />}></Route>
@@ -36,8 +41,11 @@ function App() {
               <Route path="/premium" element={<Premium />}></Route>
               <Route path="/about-us" element={<AboutUs />}></Route>
               <Route path="/afterpay" element={<AfterPay />}></Route>
-              <Route path="/universidades/:universitySlug/" element={<CareerList />} />
-              <Route path="/universidades/:universitySlug/:careerSlug/" element={<SubjectList />} />
+              <Route path="/universidades/:universitySlug" element={<CareerList />} />
+              <Route path="/universidades/:universitySlug/:careerSlug" element={<SubjectList />} />
+              <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug" element={<TopicList />} />
+              <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug/:topicSlug" element={<ProblemList />} />
+              <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug/:topicSlug/:problemSlug" element={<Exercise />} />
             </Routes>
           </div>
           <ChatBot></ChatBot>
