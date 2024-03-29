@@ -8,38 +8,38 @@ import MathySymbol from './MathySymbol';
 const defaultItems = [
     {
         slug: "/universidades/",
-        anchor: "Ejercicios"
+        anchor: "EJERCICIOS"
     },
     {
         slug: "/about-us/",
-        anchor: "Sobre Nosotros"
+        anchor: "SOBRE NOSOTROS"
     },
     {
         slug: "/premium/",
-        anchor: "Premium"
+        anchor: "PREMIUM"
     },
     {
         slug: "/login/",
-        anchor: "Log in"
+        anchor: "LOG IN"
     },
     {
         slug: "/register/",
-        anchor: "Regístrate"
+        anchor: "REGÍSTRATE"
     }
 
 ];
 const otherItems = [
     {
         slug: "/universidades/",
-        anchor: "Ejercicios"
+        anchor: "EJERCICIOS"
     },
     {
         slug: "/premium/",
-        anchor: "Premium"
+        anchor: "PREMIUM"
     },
     {
         slug: "/about-us/",
-        anchor: "Sobre Nosotros"
+        anchor: "SOBRE NOSOTROS"
     }
 
 ];
@@ -68,8 +68,8 @@ export default function Navbar() {
         <nav className="opacity-4 relative bg-white shadow dark:bg-gray-800">
             <div className="container px-6 py-4 mx-auto md:flex md:justify-between md:items-center">
                 <div className="flex items-center justify-between">
-                    <a href="/universidades">
-                        <img className="w-auto h-12 sm:h-15" src={logo} alt="Logo" />
+                    <a href="/universidades" className="flex items-center">
+                        <img className="w-auto h-12 sm:h-15 md:h-12" src={logo} alt="Logo" />
                     </a>
 
                     {/* Mobile menu button */}
@@ -90,13 +90,18 @@ export default function Navbar() {
 
                 {/* Mobile Menu */}
                 <div className={`${isOpen ? 'translate-x-0 opacity-100' : 'opacity-0 -translate-x-full'} absolute inset-x-0 z-20 w-full px-6 py-4 transition-all duration-300 ease-in-out bg-white dark:bg-gray-800 md:mt-0 md:p-0 md:top-0 md:relative md:bg-transparent md:w-auto md:opacity-100 md:translate-x-0 md:flex md:items-center`}>
-                    <div className="flex flex-col md:flex-row md:mx-6">
+                    <div className="flex flex-col md:flex-row md:mx-6 md:items-center">
                         {items.map((item, index) => (
                             <a
                                 key={index}
-                                className={`my-2 text-gray-700 transition-colors duration-300 transform dark:text-gray-200 hover:text-blue-500 dark:hover:text-blue-400 md:mx-4 md:my-0 ${item.anchor === "Ejercicios" ? "font-bold" : "" // Aplica la clase 'font-bold' al botón "Ejercicios"
-                                    }`}
                                 href={item.slug}
+                                className={`my-2 md:my-0 transition-all duration-300 transform md:mx-2 px-3 py-1 rounded-md uppercase font-bold ${item.anchor === "REGÍSTRATE" || item.anchor === "LOG IN" ? "tracking-wide text-sm md:text-xs" : "text-sm"
+                                    } ${item.anchor === "REGÍSTRATE" ?
+                                        "text-white bg-gradient-to-r from-purple-500 to-purple-700 hover:bg-purple-600" :
+                                        item.anchor === "LOG IN" ?
+                                            "whitespace-nowrap text-white bg-gradient-to-r from-teal-500 to-teal-700 hover:bg-teal-600" :
+                                            "whitespace-nowrap text-gray-200 hover:text-blue-500"
+                                    }`}
                             >
                                 {item.anchor}
                             </a>
@@ -106,7 +111,7 @@ export default function Navbar() {
                     {isLoggedIn && <div><Dropdown /></div>}
                     {isLoggedIn && (
                         <div className="flex items-center">
-                            <span  className="text-white font-bold mr-2">{mathys}</span> <MathySymbol />
+                            <span className="text-white font-bold mr-2">{mathys}</span> <MathySymbol />
                         </div>
                     )}
 

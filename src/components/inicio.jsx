@@ -29,7 +29,7 @@ export default function Inicio() {
                   <div className="flex flex-col justify-center space-y-2 pb-16 pt-10 sm:flex-row sm:items-center sm:space-x-2 sm:space-y-0 lg:justify-start">
                     <a
                       href="/Register"
-                      className="inline-flex items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-7 py-3.5 font-semibold leading-6 text-white hover:text-white transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100 hover:bg-blue-900"
+                      className="inline-flex items-center justify-center space-x-2 rounded-lg  bg-gradient-to-r from-purple-500 to-purple-700 hover:bg-purple-600 px-7 py-3.5 font-semibold leading-6 text-white hover:text-white transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100"
                     >
                       <span>Regístrate</span>
                     </a>
