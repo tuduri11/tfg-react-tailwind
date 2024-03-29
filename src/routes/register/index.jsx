@@ -51,6 +51,7 @@ export default function Index() {
 
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [isRegistered, setIsRegistered] = useState(false);
+    const [slug_client,setSlug_client]= useState('');
 
     const { isLoggedIn, setIsLoggedIn } = useAuth();
     const { setIsPremium } = useAuth();
@@ -200,10 +201,18 @@ export default function Index() {
     const navigateToPerfil = ()=> {
         navigate('/edit-profile');
     }
-
-    const navigateToHome = ()=> {
-        navigate('/universidades');
-    }
+    
+    const navigateToHome = () => {
+        // Verifica si slug_client es efectivamente `null` o una cadena vacía
+        // y redirige a "/universidades" directamente en ese caso.
+        if (!slug_client || slug_client === 'null') {
+          navigate('/universidades');
+        } else {
+          // Si slug_client tiene un valor válido que no es `null`,
+          // procede con la redirección a "/universidades/{slug_client}"
+          navigate(`/universidades/${slug_client}`);
+        }
+      };
 
     //Obtenemos las universidades a través de la base de datos
     useEffect(() => {
@@ -243,7 +252,7 @@ export default function Index() {
                     setErrorMessages('Something went wrong')
                 })
 
-            const { success, msg, refresh, access, is_premium } = await response
+            const { success, msg, refresh, access, is_premium, university_slug } = await response
             // const {success, msg, token} = await response
             setIsSubmitting(false)
             if (success) {
@@ -251,6 +260,7 @@ export default function Index() {
                 setEmail(emailBase(email))
                 setIsLoggedIn(true)
                 setIsPremium(is_premium)
+                setSlug_client(university_slug)
                 const expires = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
                 Cookies.set('access_token', access, { expires: expires, sameSite: 'Lax' })
                 Cookies.set('refresh_token', refresh, { sameSite: 'Lax' })

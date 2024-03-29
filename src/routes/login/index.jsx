@@ -20,6 +20,7 @@ export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessages, setErrorMessages] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [slug_client, setSlug_client] = useState('');
 
   const { isLoggedIn, setIsLoggedIn, setIsPremium } = useAuth();
   const { fetchMathys } = useAuth();
@@ -28,10 +29,6 @@ export default function Login() {
   useEffect(() => {
     isAuthenticated().then(res => setIsLoggedIn(res));
   }, [setIsLoggedIn]);
-
-  const navigateToHome = () => {
-    navigate('/universidades');
-  };
 
 
   async function handleSubmit(event) {
@@ -59,11 +56,13 @@ export default function Login() {
           setErrorMessages('Something went wrong')
         })
 
-      const { success, msg, refresh, access, is_premium } = await response
+      const { success, msg, refresh, access, is_premium, university_slug } = await response
       // const {success, msg, token} = await response
       setIsSubmitting(false)
       if (success) {
         setEmail(emailBase(email))
+        console.log(university_slug)
+        setSlug_client(university_slug)
         //localStorage.setItem('csrftoken',token)
         setIsLoggedIn(true)
         //Ahora sabremos en todo momento si el usuario es premium o no.
@@ -71,8 +70,7 @@ export default function Login() {
         const expires = new Date(new Date().getTime() + ACCESS_TOKEN_EXPIRE_TIME)
         Cookies.set('access_token', access, { expires: expires, sameSite: 'Lax' })
         Cookies.set('refresh_token', refresh, { sameSite: 'Lax' })
-        await fetchMathys()
-        navigateToHome()
+        await fetchMathys();
       }
       else {
         setErrorMessages(msg)
@@ -87,6 +85,16 @@ export default function Login() {
   const navigateToRegister = () => {
     navigate('/register');
   };
+
+  useEffect(() => {
+    if (slug_client) {
+      // Solo redirigir si slug_client tiene un valor distinto de null y no es una cadena vacía
+      navigate(`/universidades/${slug_client}`);
+    } else if (slug_client === null) {
+      // Maneja el caso en el que no hay slug (usuario sin universidad)
+      navigate('/universidades');
+    }
+  }, [slug_client, navigate]);
 
 
 
