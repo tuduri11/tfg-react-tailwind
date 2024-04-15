@@ -40,7 +40,7 @@ export default function ChatBot() {
         else if (mathys <= 0) {
             // Añade un mensaje de error al chat
             const errorMessage = {
-                message: "No tienes suficientes mathys.",
+                message: "No tienes suficientes Mathys.",
                 sender: "Error" // Utiliza un remitente especial para el mensaje de error
             };
             setMessages([...messages, errorMessage]);

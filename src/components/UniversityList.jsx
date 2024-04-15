@@ -30,7 +30,7 @@ export default function UniversityList() {
         <div id="page-container" className="text-white mx-auto flex min-h-dvh w-full min-w-[320px] flex-col bg-gray-100 dark:bg-gray-900">
 
             <div className="p-4">
-                <h2 className="text-lg font-semibold mb-4">Select a University:</h2>
+                <h2 className="text-lg font-semibold mb-4">Escoge tu universidad:</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {universities.map((university) => (
                         <div

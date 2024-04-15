@@ -6,6 +6,7 @@ import NotFoundComponent from './NotFoundComponent';
 
 export default function ProblemList() {
     const { universitySlug, careerSlug, subjectSlug, topicSlug} = useParams();
+    const [topicName, setTopicName]= useState('');
     const [problems, setProblems] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -29,6 +30,7 @@ export default function ProblemList() {
             .then((data) => {
                 if (data.success) {
                     setProblems(data.problems)
+                    setTopicName(data.topicName)
                 } else {
                     throw new Error('Failed to load problems')
                 }
@@ -61,8 +63,9 @@ export default function ProblemList() {
             <div className="p-4">
                 <div className="mb-4">
                     <BackButton />
+                    <h1 className="text-xl font-bold">{topicName}</h1>
                 </div>
-                <h2 className="text-lg font-semibold mb-4">Select a Problem:</h2>
+                <h2 className="text-lg font-semibold mb-4">Selecciona el problema:</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {problems.map((problem) => (
                         <div

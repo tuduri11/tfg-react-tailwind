@@ -6,6 +6,7 @@ import NotFoundComponent from './NotFoundComponent';
 
 export default function CareerList() {
     const { universitySlug } = useParams();
+    const [universityName, setUniversityName]= useState('');
     const [careers, setCareers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -29,6 +30,7 @@ export default function CareerList() {
             .then((data) => {
                 if (data.success) {
                     setCareers(data.careers)
+                    setUniversityName(data.universityName)
                 } else {
                     throw new Error('Failed to load careers')
                 }
@@ -61,8 +63,9 @@ export default function CareerList() {
             <div className="p-4">
                 <div className="mb-4">
                     <BackButton />
+                    <h1 className="text-xl font-bold">{universityName}</h1>
                 </div>
-                <h2 className="text-lg font-semibold mb-4">Select a Career:</h2>
+                <h2 className="text-lg font-semibold mb-4">Elige tu Carrera:</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {careers.map((career) => (
                         <div

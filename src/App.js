@@ -22,6 +22,7 @@ import TopicList from './components/TopicList';
 import NotFoundPage from './components/NotFoundPage';
 import ProblemList from './components/ProblemList';
 import Exercise from './routes/exercise';
+import 'katex/dist/katex.min.css';
 
 function App() {
   return (

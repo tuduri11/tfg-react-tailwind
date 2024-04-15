@@ -7,6 +7,7 @@ import NotFoundComponent from './NotFoundComponent';
 export default function TopicList() {
     const { universitySlug, careerSlug, subjectSlug } = useParams();
     const navigate = useNavigate();
+    const [subjectName, setSubjectName]= useState('');
     const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -29,6 +30,7 @@ export default function TopicList() {
             .then((data) => {
                 if (data.success) {
                     setTopics(data.topics)
+                    setSubjectName(data.subjectName)
                 }
                 else {
                     throw new Error('Failed to load topics')
@@ -60,8 +62,9 @@ export default function TopicList() {
             <div className="p-4">
                 <div className="mb-4">
                     <BackButton />
+                    <h1 className="text-xl font-bold">{subjectName}</h1>
                 </div>
-                <h2 className="text-lg font-semibold mb-4">Select a Topic:</h2>
+                <h2 className="text-lg font-semibold mb-4">Elige el tema:</h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {topics.map((topic) => (
                         <div
