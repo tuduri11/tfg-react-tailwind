@@ -12,6 +12,8 @@ import { getAccessToken } from '../../session';
 import ErrorMessage from '../../components/ErrorMessage';
 import { useAuth } from '../../utils/AuthContext';
 import MathySymbol from '../../components/MathySymbol';
+import LoadingComponent from '../../components/LoadingComponent';
+import ErrorState from '../../components/ErrorState';
 
 export default function Exercise() {
     const navigate = useNavigate();
@@ -141,13 +143,15 @@ export default function Exercise() {
         }
     }
 
-    if (loading) return <div>Loading...</div>;
+    if (loading){
+        return <LoadingComponent></LoadingComponent>
+    }
     if (notFound) {
         return <NotFoundComponent message="Problema no encontrado" />;
     }
 
     if (errorMessage) {
-        return <div>Error: {errorMessage}</div>;
+        return <ErrorState errorMessage={errorMessage}></ErrorState>
     }
 
 
