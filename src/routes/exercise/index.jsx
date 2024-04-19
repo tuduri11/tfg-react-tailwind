@@ -1,6 +1,6 @@
 import { SERVER_DNS } from '../../utils/constants';
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import BackButton from '../../components/BackButton'
 import NotFoundComponent from '../../components/NotFoundComponent';
@@ -28,6 +28,8 @@ export default function Exercise() {
     const [errorMessageWolfram, setErrorMessageWolfram] = useState('');
     const [showTooltip, setShowTooltip] = useState(false);
     const [solutionRequested, setSolutionRequested] = useState(false);
+    const [batchData, setBatchData] = useState([]);
+    const batchDataRef = useRef(batchData);
 
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState('');
@@ -78,11 +80,19 @@ export default function Exercise() {
         problema();
     }, [problema]);
 
+    useEffect(() => {
+        batchDataRef.current = batchData;  // Mantener la referencia actualizada
+    }, [batchData]);
+
 
     function userAnswer(answer) {
+        const correct = answer === problem.respuesta_correcta;
         setselectedOptions(answer);
-        setisCorrect(answer === problem.respuesta_correcta);
+        setisCorrect(correct);
         setIsAnswered(true);
+
+        // Llama a handleExerciseResult con el resultado de la respuesta
+        handleExerciseResult(correct);
     }
 
     function handleMouseEnter() {
@@ -142,8 +152,56 @@ export default function Exercise() {
             setSolutionRequested(false);
         }
     }
+    
+    const sendResultsToServer = useCallback(async (results) => {
+        try {
+            let token = await getAccessToken();
+            await fetch(`${SERVER_DNS}/education/exerciseDone`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ results })
+            });
+            console.log('Results sent:', results);
+        } catch (error) {
+            console.error('Error sending exercise results:', error);
+        }
+    }, []);
 
-    if (loading){
+    const handleExerciseResult = useCallback((isCorrect) => {
+        setBatchData(currentData => {
+            const newData = [...currentData, { correct: isCorrect }];
+            if (newData.length >= 5) {
+                sendResultsToServer(newData);
+                return [];
+            }
+            return newData;
+        });
+    }, [sendResultsToServer]);
+    
+
+    // Manejar el envío de datos al desmontar y antes de cerrar la página
+    useEffect(() => {
+        const sendPendingData = () => {
+            if (batchDataRef.current.length > 0) {
+                sendResultsToServer(batchDataRef.current);
+                setBatchData([]);  // Limpiar después de enviar
+            }
+        };
+
+        window.addEventListener('beforeunload', sendPendingData);
+
+        return () => {
+            window.removeEventListener('beforeunload', sendPendingData);
+            sendPendingData();  // También enviar al desmontar
+        };
+    }, [sendResultsToServer]); // Dependencias del efecto, reacciona a cambios en batchData
+
+
+
+    if (loading) {
         return <LoadingComponent></LoadingComponent>
     }
     if (notFound) {
