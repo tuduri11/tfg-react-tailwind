@@ -20,6 +20,10 @@ export default function Dropdown() {
     navigate('/login');
   };
 
+  const navigateToStatistics = () => {
+    navigate('/statistics');
+  };
+
   async function logOut() {
     let access = await getAccessToken()
     let response = await fetch(`${SERVER_DNS}/accounts/logout`,
@@ -71,7 +75,6 @@ export default function Dropdown() {
       >
         <Menu.Items className="absolute md:right-0 md:origin-top-right z-10 mt-2 w-40  divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            {/* A continuación, se muestra cómo aplicar las clases directamente */}
             <Menu.Item className="hover:bg-slate-300">
             <button
                 className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
@@ -80,9 +83,17 @@ export default function Dropdown() {
                 Tu perfil
               </button>
             </Menu.Item>
-            {/* Repite esto para cada Menu.Item */}
           </div>
-          {/* ... otros Menu.Items ... */}
+          <div className="py-1">
+            <Menu.Item className="hover:bg-slate-300">
+            <button
+                className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
+                onClick={navigateToStatistics} // Vinculando el evento onClick
+              >
+                Estadísticas
+              </button>
+            </Menu.Item>
+          </div>
           <div className="py-1">
             <Menu.Item className="hover:bg-slate-300">
               {({ active }) => (

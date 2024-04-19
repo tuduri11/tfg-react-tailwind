@@ -56,11 +56,13 @@ export default function EditProfile() {
     const [FailMessageCancel, setFailMessageCancel]= useState('');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    
     // Función para manejar la confirmación del modal
     const handleModalConfirm = () => {
         handleCancelSubscription();
         setIsModalOpen(false); // Cierra el modal después de confirmar
     };
+
     // Función para cerrar el modal sin realizar ninguna acción
     const handleModalClose = () => {
         setIsModalOpen(false);
