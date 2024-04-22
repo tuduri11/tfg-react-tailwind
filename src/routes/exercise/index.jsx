@@ -16,6 +16,8 @@ import LoadingComponent from '../../components/LoadingComponent';
 import ErrorState from '../../components/ErrorState';
 
 export default function Exercise() {
+    const { setIsSendingResults } = useAuth();
+
     const navigate = useNavigate();
     const { problemSlug } = useParams();
     const [problem, setProblem] = useState(null);
@@ -154,6 +156,7 @@ export default function Exercise() {
     }
     
     const sendResultsToServer = useCallback(async (results) => {
+        setIsSendingResults(true);
         try {
             let token = await getAccessToken();
             await fetch(`${SERVER_DNS}/education/exerciseDone`, {
@@ -167,6 +170,8 @@ export default function Exercise() {
             console.log('Results sent:', results);
         } catch (error) {
             console.error('Error sending exercise results:', error);
+        } finally{
+            setIsSendingResults(false);
         }
     }, []);
 

@@ -9,6 +9,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [mathys, setMathys] = useState(0);
+    const [isSendingResults, setIsSendingResults]= useState(false);
 
     const [isPremium, setIsPremium] = useLocalStorage('isPremium', false);
 
@@ -71,7 +72,7 @@ export const AuthProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, mathys, setMathys,fetchMathys, updateMathys, isPremium, setIsPremium }}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, mathys, setMathys,fetchMathys, updateMathys, isPremium, setIsPremium, isSendingResults,setIsSendingResults}}>
             {children}
         </AuthContext.Provider>
     );

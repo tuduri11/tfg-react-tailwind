@@ -3,44 +3,62 @@ import { SERVER_DNS } from "../../utils/constants";
 import { getAccessToken } from '../../session';
 import LoadingComponent from '../../components/LoadingComponent';
 import { Doughnut } from 'react-chartjs-2';
+import { useAuth } from '../../utils/AuthContext';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 Chart.register(ArcElement, Tooltip, Legend);
 
 export default function Statistics() {
+    const {isSendingResults}= useAuth();
     const [userStats, setUserStats] = useState(null);
     const [errorMessages, setErrorMessages] = useState('');
     const [newUserMessage, setNewUserMessage] = useState('');
 
-    useEffect(() => {
-        const FetchUserStats = async () => {
-            try {
-                let token = await getAccessToken();
-                let response = await fetch(`${SERVER_DNS}/education/userStats`, {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
-                });
-                const data = await response.json();
-                if (data.success) {
-                    setUserStats(data.data)
-                    if (data.data.num_attempts === 0) {
-                        setNewUserMessage('¡A qué esperas para hacer algunos ejercicios y ver tus estadísticas!')
-                    }
-                } else {
-                    setErrorMessages(data.msg || 'No stats available')
+    const FetchUserStats = async () => {
+        try {
+            let token = await getAccessToken();
+            let response = await fetch(`${SERVER_DNS}/education/userStats`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
                 }
-
-
-            } catch (error) {
-                setErrorMessages('Failed to fetch statistics');
+            });
+            const data = await response.json();
+            if (data.success) {
+                setUserStats(data.data)
+                if (data.data.num_attempts === 0) {
+                    setNewUserMessage('¡A qué esperas para hacer algunos ejercicios y ver tus estadísticas!')
+                }
+            } else {
+                setErrorMessages(data.msg || 'No stats available')
             }
-        };
-        FetchUserStats();
 
 
-    }, []);
+        } catch (error) {
+            setErrorMessages('Failed to fetch statistics');
+        }
+    };
+
+    useEffect(() => {
+        let timeoutId;
+
+    const fetchStatsIfNeeded = async () => {
+        if (!isSendingResults) {
+            await FetchUserStats();
+        } else {
+            // Si aún se están enviando resultados, planifica volver a intentar después de un retardo
+            timeoutId = setTimeout(() => {
+                FetchUserStats();
+            }, 500);
+        }
+    };
+
+    fetchStatsIfNeeded();
+
+    // Limpieza del timeout si el componente se desmonta o si el estado de isSendingResults cambia
+    // antes de que el timeout se complete.
+    return () => clearTimeout(timeoutId);
+    }, [isSendingResults]);
 
     const chartData = {
         labels: ['Intentos Exitosos', 'Intentos Fallidos'],
