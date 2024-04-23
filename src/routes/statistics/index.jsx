@@ -2,16 +2,24 @@ import React, { useState, useEffect } from 'react';
 import { SERVER_DNS } from "../../utils/constants";
 import { getAccessToken } from '../../session';
 import LoadingComponent from '../../components/LoadingComponent';
+import ErrorMessage from '../../components/ErrorMessage';
 import { Doughnut } from 'react-chartjs-2';
 import { useAuth } from '../../utils/AuthContext';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 Chart.register(ArcElement, Tooltip, Legend);
 
 export default function Statistics() {
-    const {isSendingResults}= useAuth();
+    const { isSendingResults } = useAuth();
     const [userStats, setUserStats] = useState(null);
     const [errorMessages, setErrorMessages] = useState('');
     const [newUserMessage, setNewUserMessage] = useState('');
+
+    const [userRanking, setuserRanking] = useState(null);
+    const [rankingGeneral, setRankingGeneral] = useState([]);
+    const [errormessageRanking, seterrorMessageRanking] = useState('');
+
+    const [statsLoaded, setStatsLoaded] = useState(false);
+    const [rankingLoaded, setRankingLoaded] = useState(false);
 
     const FetchUserStats = async () => {
         try {
@@ -32,32 +40,59 @@ export default function Statistics() {
             } else {
                 setErrorMessages(data.msg || 'No stats available')
             }
-
-
         } catch (error) {
             setErrorMessages('Failed to fetch statistics');
+        } finally {
+            setStatsLoaded(true)
+        }
+    };
+
+    const FetchRanking = async () => {
+        try {
+            let token = await getAccessToken();
+            let response = await fetch(`${SERVER_DNS}/education/ranking`, {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                setRankingGeneral(data.data || []);
+                setuserRanking(data.user_rank || 'Not ranked');
+            } else {
+                seterrorMessageRanking(data.message || 'No stats available');
+            }
+        }
+        catch (error) {
+            seterrorMessageRanking(error || 'Failed to fetch user ranking');
+        } finally {
+            setRankingLoaded(true);
         }
     };
 
     useEffect(() => {
         let timeoutId;
 
-    const fetchStatsIfNeeded = async () => {
-        if (!isSendingResults) {
-            await FetchUserStats();
-        } else {
-            // Si aún se están enviando resultados, planifica volver a intentar después de un retardo
-            timeoutId = setTimeout(() => {
-                FetchUserStats();
-            }, 500);
-        }
-    };
+        const fetchStatsIfNeeded = async () => {
+            if (!isSendingResults) {
+                await FetchUserStats();
+                await FetchRanking();
+            } else {
+                // Si aún se están enviando resultados, planifica volver a intentar después de un retardo
+                timeoutId = setTimeout(() => {
+                    FetchUserStats();
+                    FetchRanking();
+                }, 500);
+            }
+        };
 
-    fetchStatsIfNeeded();
+        fetchStatsIfNeeded();
 
-    // Limpieza del timeout si el componente se desmonta o si el estado de isSendingResults cambia
-    // antes de que el timeout se complete.
-    return () => clearTimeout(timeoutId);
+        // Limpieza del timeout si el componente se desmonta o si el estado de isSendingResults cambia
+        // antes de que el timeout se complete.
+        return () => clearTimeout(timeoutId);
     }, [isSendingResults]);
 
     const chartData = {
@@ -92,47 +127,93 @@ export default function Statistics() {
         }
     };
 
+    if (!statsLoaded && !rankingLoaded) {
+        return <LoadingComponent></LoadingComponent>
+    }
 
     return (
-        <div id="page-container" className="text-white mx-auto flex min-h-screen w-full flex-col bg-gray-800 p-4">
-            <h1 className="text-2xl font-bold text-center mb-6">Tus Estadísticas</h1>
-            {newUserMessage && (
-                <div className="max-w-md mx-auto mb-4 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
-                    <div className="p-5">
-                        <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white text-center">
-                            ¡Bienvenido/a!
-                        </h3>
-                        <p className="text-sm text-gray-700 dark:text-gray-400 text-center">
-                            {newUserMessage}
-                        </p>
-                    </div>
-                </div>
-            )}
-            {userStats ? (
-                <div className="p-4 bg-gray-700 rounded shadow flex flex-col items-center space-y-4">
-                    <div className="w-full max-w-xs">
-                        <Doughnut data={chartData} options={chartOptions} />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full text-center">
-                        <div className="bg-gray-600 p-4 rounded shadow">
-                            <p className="text-lg font-semibold">Total de Intentos</p>
-                            <p className="text-2xl">{userStats.num_attempts}</p>
-                        </div>
-                        <div className="bg-gray-600 p-4 rounded shadow">
-                            <p className="text-lg font-semibold">Intentos Exitosos</p>
-                            <p className="text-2xl">{userStats.success}</p>
-                        </div>
-                        <div className="bg-gray-600 p-4 rounded shadow">
-                            <p className="text-lg font-semibold">Tasa de Éxito</p>
-                            <p className="text-2xl">{userStats.num_attempts > 0 ? ((userStats.success / userStats.num_attempts) * 100).toFixed(2) + '%' : 'N/A'}</p>
+        <div id="page-container" className="overflow-auto text-white mx-auto flex min-h-screen w-full flex-col bg-gray-900 p-4">
+            <div className="mx-auto max-w-5xl p-5 sm:p-3">
+                <h1 className="text-2xl font-bold text-center mb-6">Tus Estadísticas</h1>
+                {newUserMessage && (
+                    <div className="max-w-md mx-auto mb-4 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
+                        <div className="p-5">
+                            <h3 className="mb-2 text-lg font-semibold text-gray-900 dark:text-white text-center">
+                                ¡Bienvenido/a!
+                            </h3>
+                            <p className="text-sm text-gray-700 dark:text-gray-400 text-center">
+                                {newUserMessage}
+                            </p>
                         </div>
                     </div>
+                )}
+                {userStats ? (
+                    <div className="p-4 bg-gray-700 rounded shadow flex flex-col items-center space-y-4">
+                        <div className="w-full max-w-xs">
+                            <Doughnut data={chartData} options={chartOptions} />
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full text-center">
+                            <div className="bg-gray-600 p-4 rounded shadow">
+                                <p className="text-lg font-semibold">Total de Intentos</p>
+                                <p className="text-2xl">{userStats.num_attempts}</p>
+                            </div>
+                            <div className="bg-gray-600 p-4 rounded shadow">
+                                <p className="text-lg font-semibold">Intentos Exitosos</p>
+                                <p className="text-2xl">{userStats.success}</p>
+                            </div>
+                            <div className="bg-gray-600 p-4 rounded shadow">
+                                <p className="text-lg font-semibold">Tasa de Éxito</p>
+                                <p className="text-2xl">{userStats.num_attempts > 0 ? ((userStats.success / userStats.num_attempts) * 100).toFixed(2) + '%' : 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex justify-center items-center p-4">
+                        {errorMessages ? (
+                            <ErrorMessage message={errorMessages} />
+                        ) : null}
+                    </div>
+                )}
+                {rankingGeneral.length > 0 && (
+                    <div className="mt-8">
+                        <h2 className="text-2xl font-bold text-center text-whitw">Ranking Mundial</h2>
+                        <div className="mt-4 bg-white rounded-lg shadow-lg overflow-hidden">
+                            <table className="min-w-full leading-normal">
+                                <thead>
+                                    <tr className="bg-gray-700 text-white">
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Posición</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Estudiante</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Intentos</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Aciertos</th>
+                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Tasa de Éxito (%)</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white">
+                                    {rankingGeneral.map((student, index) => (
+                                        <tr key={index} className={`hover:bg-gray-200 ${userRanking === index + 1 ? 'bg-amber-200' : ''}`}>
+                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-900 font-bold">{index + 1}</td>
+                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.student_name}</td>
+                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.num_attempts}</td>
+                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.success}</td>
+                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600 font-bold">{student.success_rate}</td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                )}
+                <div className="mt-8 flex justify-center items-center">
+                    {userRanking !== null ? (
+                        <div>
+                            <p className="text-lg font-semibold text-center">Tu posición en el ranking es:</p>
+                            <p className="text-xl text-center font-bold text-blue-600">{typeof userRanking === 'number' ? `#${userRanking}` : userRanking}</p>
+                        </div>
+                    ) : (
+                        <ErrorMessage message={errormessageRanking ? errormessageRanking.message : 'Error desconocido'} className="text-red-500 text-center" />
+                    )}
                 </div>
-            ) : (
-                <div className="p-4">
-                    {errorMessages ? <p>{errorMessages}</p> : <LoadingComponent />}
-                </div>
-            )}
+            </div>
         </div>
     );
 };
