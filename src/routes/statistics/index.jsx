@@ -58,15 +58,16 @@ export default function Statistics() {
                 }
             });
             const data = await response.json();
+            
             if (data.success) {
                 setRankingGeneral(data.data || []);
-                setuserRanking(data.user_rank || 'Not ranked');
+                setuserRanking(data.user_rank || 'Necesitas más intentos para entrar en el ranking');
             } else {
                 seterrorMessageRanking(data.message || 'No stats available');
             }
         }
         catch (error) {
-            seterrorMessageRanking(error || 'Failed to fetch user ranking');
+            seterrorMessageRanking(error.message || 'Failed to fetch user ranking');
         } finally {
             setRankingLoaded(true);
         }
@@ -203,14 +204,14 @@ export default function Statistics() {
                         </div>
                     </div>
                 )}
-                <div className="mt-8 flex justify-center items-center">
+                <div className="p-4 flex justify-center items-center">
                     {userRanking !== null ? (
                         <div>
                             <p className="text-lg font-semibold text-center">Tu posición en el ranking es:</p>
                             <p className="text-xl text-center font-bold text-blue-600">{typeof userRanking === 'number' ? `#${userRanking}` : userRanking}</p>
                         </div>
                     ) : (
-                        <ErrorMessage message={errormessageRanking ? errormessageRanking.message : 'Error desconocido'} className="text-red-500 text-center" />
+                        <ErrorMessage message={errormessageRanking ? errormessageRanking : 'Error desconocido'} className="text-red-500 text-center" />
                     )}
                 </div>
             </div>
