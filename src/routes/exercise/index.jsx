@@ -14,6 +14,9 @@ import { useAuth } from '../../utils/AuthContext';
 import MathySymbol from '../../components/MathySymbol';
 import LoadingComponent from '../../components/LoadingComponent';
 import ErrorState from '../../components/ErrorState';
+import FavouriteButton from '../../components/favouriteButton';
+import { isAuthenticated } from '../../session';
+import toast from 'react-hot-toast';
 
 export default function Exercise() {
     const { setIsSendingResults } = useAuth();
@@ -38,16 +41,31 @@ export default function Exercise() {
     const [notFound, setNotFound] = useState(false);
 
     const { mathys, setMathys } = useAuth();
-    const { isLoggedIn } = useAuth();
+    const { isLoggedIn, setIsLoggedIn, isLoadingAuth} = useAuth();
+    const [isFavourite, setIsFavourite] = useState(false);
 
-    const problema = useCallback(() => {
+    const problema = useCallback(async () => {
         setIsAnswered(false);
         setWolfram(null);
         setErrorMessageWolfram(null);
         setSolutionRequested(false);
-
         setLoading(true)
-        fetch(`${SERVER_DNS}/education/get-problem/${problemSlug}`)
+        console.log(isLoggedIn)
+        let headers = {
+            'Content-Type': 'application/json'
+        };
+        // Si el usuario ha iniciado sesión, añade el token a la cabecera
+        if (isLoggedIn) {
+            const token = await getAccessToken();
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+        }
+        fetch(`${SERVER_DNS}/education/get-problem/${problemSlug}`, {
+            method: 'GET',
+            headers: headers,
+            credentials: 'include'  // Asumiendo que necesitas enviar cookies para mantener la sesión
+        })
             .then((response) => {
                 if (!response.ok) {
                     if (response.status === 404) {
@@ -60,7 +78,9 @@ export default function Exercise() {
             })
             .then((data) => {
                 if (data.success) {
+                    console.log("Data received on reload:", data);
                     setProblem(data.problem)
+                    setIsFavourite(data.is_favourite);
                     const allOptions = [data.problem.respuesta_correcta, ...data.problem.respuestas_erroneas];
                     shuffleArray(allOptions);
                     setOptions(allOptions);
@@ -75,12 +95,70 @@ export default function Exercise() {
 
             })
             .finally(() => setLoading(false));
-    }, [problemSlug]);
+    }, [problemSlug, isLoggedIn, isLoadingAuth]);
+
+    const toggleFavourite = async () => {
+        try {
+            let token = await getAccessToken();
+            let response = await fetch(`${SERVER_DNS}/favourites/addFavourites/${problemSlug}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            const data = await response.json();
+            if (data.success) {
+                setIsFavourite(data.isFavourite);
+                toast.success(data.msg, {
+                    style: {
+                        border: '1px solid #10b981',
+                        padding: '16px',
+                        color: '#FFFFFF',
+                        backgroundColor: '#1A202C',
+                    },
+                    iconTheme: {
+                        primary: '#10b981',
+                        secondary: '#2D3748',
+                    },
+                });
+            } else {
+                toast.error(data.msg, {
+                    style: {
+                        border: '1px solid #E53E3E', // Un color rojo que destaque para el borde
+                        padding: '16px',
+                        color: '#FFFFFF', // Texto blanco para mayor legibilidad en fondos oscuros
+                        backgroundColor: '#1A202C', // Un gris oscuro para el fondo, consistente con el tema oscuro de la página
+                    },
+                    iconTheme: {
+                        primary: '#E53E3E', // Rojo para el icono
+                        secondary: '#FFFFFF', // Fondo blanco para el icono, para contrastar con el rojo
+                    }
+                });
+                throw new Error(data.msg || 'Error al cambiar el estado de favorito');
+            }
+        } catch (error) {
+            toast.error('Error al cambiar el estado de favorito.', {
+                style: {
+                    border: '1px solid #E53E3E', // Un color rojo que destaque para el borde
+                    padding: '16px',
+                    color: '#FFFFFF', // Texto blanco para mayor legibilidad en fondos oscuros
+                    backgroundColor: '#1A202C', // Un gris oscuro para el fondo, consistente con el tema oscuro de la página
+                },
+                iconTheme: {
+                    primary: '#E53E3E', // Rojo para el icono
+                    secondary: '#FFFFFF', // Fondo blanco para el icono, para contrastar con el rojo
+                }
+            });
+        }
+    }
 
     // Cargar problema y sus datos
     useEffect(() => {
-        problema();
-    }, [problema]);
+        if (!isLoadingAuth) {
+            problema();
+        }
+    }, [problema, isLoadingAuth]);
 
     useEffect(() => {
         batchDataRef.current = batchData;  // Mantener la referencia actualizada
@@ -154,7 +232,7 @@ export default function Exercise() {
             setSolutionRequested(false);
         }
     }
-    
+
     const sendResultsToServer = useCallback(async (results) => {
         setIsSendingResults(true);
         try {
@@ -170,7 +248,7 @@ export default function Exercise() {
             console.log('Results sent:', results);
         } catch (error) {
             console.error('Error sending exercise results:', error);
-        } finally{
+        } finally {
             setIsSendingResults(false);
         }
     }, []);
@@ -185,7 +263,7 @@ export default function Exercise() {
             return newData;
         });
     }, [sendResultsToServer]);
-    
+
 
     // Manejar el envío de datos al desmontar y antes de cerrar la página
     useEffect(() => {
@@ -229,6 +307,9 @@ export default function Exercise() {
                     <div className="bg-red-500 rounded text-center py-2 px-4 mb-4">
                         <p className="text-white font-semibold">Debes <button onClick={() => navigate('/login')} className="underline text-white">iniciar sesión</button> para responder a los ejercicios o ver las soluciones completas.</p>
                     </div>
+                )}
+                {isLoggedIn && (
+                    <FavouriteButton isFavourite={isFavourite} onClick={() => { setIsFavourite(!isFavourite); toggleFavourite() }}></FavouriteButton>
                 )}
 
                 {problem && (

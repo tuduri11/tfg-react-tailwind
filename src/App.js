@@ -4,6 +4,7 @@ import {
   Routes,
   Route,
 } from "react-router-dom";
+import { Toaster } from 'react-hot-toast';
 import Register from './routes/register/index';
 import Home from './routes/home/index'
 import Login from './routes/login';
@@ -51,6 +52,7 @@ function App() {
             </Routes>
           </div>
           <Footer></Footer>
+          <Toaster position="top-center" />
         </div>
       </Router>
     </AuthProvider>
