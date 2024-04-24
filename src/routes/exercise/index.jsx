@@ -41,7 +41,7 @@ export default function Exercise() {
     const [notFound, setNotFound] = useState(false);
 
     const { mathys, setMathys } = useAuth();
-    const { isLoggedIn, setIsLoggedIn, isLoadingAuth} = useAuth();
+    const { isLoggedIn} = useAuth();
     const [isFavourite, setIsFavourite] = useState(false);
 
     const problema = useCallback(async () => {
@@ -50,12 +50,12 @@ export default function Exercise() {
         setErrorMessageWolfram(null);
         setSolutionRequested(false);
         setLoading(true)
-        console.log(isLoggedIn)
         let headers = {
             'Content-Type': 'application/json'
         };
         // Si el usuario ha iniciado sesión, añade el token a la cabecera
-        if (isLoggedIn) {
+        let logged = await isAuthenticated()
+        if (logged) {
             const token = await getAccessToken();
             if (token) {
                 headers['Authorization'] = `Bearer ${token}`;
@@ -95,7 +95,7 @@ export default function Exercise() {
 
             })
             .finally(() => setLoading(false));
-    }, [problemSlug, isLoggedIn, isLoadingAuth]);
+    }, [problemSlug]);
 
     const toggleFavourite = async () => {
         try {
@@ -155,10 +155,8 @@ export default function Exercise() {
 
     // Cargar problema y sus datos
     useEffect(() => {
-        if (!isLoadingAuth) {
             problema();
-        }
-    }, [problema, isLoadingAuth]);
+    }, [problema]);
 
     useEffect(() => {
         batchDataRef.current = batchData;  // Mantener la referencia actualizada

@@ -8,7 +8,6 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isLoadingAuth, setIsLoadingAuth] = useState(true);
     const [mathys, setMathys] = useState(0);
     const [isSendingResults, setIsSendingResults]= useState(false);
 
@@ -23,9 +22,6 @@ export const AuthProvider = ({ children }) => {
                 }
             })
             .catch(error => console.error('Error checking authentication:', error))
-            .finally(() => {
-                setIsLoadingAuth(false); // Establecer como falso una vez que la autenticación se ha verificado
-            });
     }, []);
 
 
@@ -76,7 +72,7 @@ export const AuthProvider = ({ children }) => {
 
 
     return (
-        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, mathys, setMathys,fetchMathys, updateMathys, isPremium, setIsPremium, isSendingResults,setIsSendingResults,isLoadingAuth}}>
+        <AuthContext.Provider value={{ isLoggedIn, setIsLoggedIn, mathys, setMathys,fetchMathys, updateMathys, isPremium, setIsPremium, isSendingResults,setIsSendingResults}}>
             {children}
         </AuthContext.Provider>
     );
