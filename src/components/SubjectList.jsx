@@ -67,22 +67,24 @@ export default function TopicList() {
 
 
     return (
-        <div className="text-white flex flex-col min-h-screen w-full min-w-[320px] bg-gray-100 dark:bg-gray-900">
-            <div className="px-4 py-5 mx-auto max-w-7xl">
+        <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 dark:bg-gray-900">
+            <div className="w-full max-w-7xl px-4 py-6">
                 <div className="mb-6 flex items-center">
                     <BackButton />
-                    <h1 className="ml-4 text-2xl font-bold">{careerName}</h1>
+                    <h1 className="ml-4 text-2xl md:text-3xl font-bold text-gray-800 dark:text-white">{careerName}</h1>
                 </div>
-                <h2 className="text-lg font-semibold mb-4">Elige la asignatura:</h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {subjects.map((subject) => (
+                <h2 className="text-lg md:text-xl font-semibold text-gray-800 dark:text-white mb-4">Asignaturas:</h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {subjects.map(subject => (
                         <div
                             key={subject.id}
-                            className="group cursor-pointer rounded-lg border border-gray-200 hover:border-blue-500 shadow-sm overflow-hidden"
+                            className="transform hover:-translate-y-2 transition duration-300 ease-in-out cursor-pointer rounded-lg overflow-hidden shadow-lg"
                             onClick={() => handleSelectSubject(subject.slug)}
                         >
-                            <div className="p-4 bg-white dark:bg-gray-800 hover:bg-blue-500 dark:hover:bg-blue-600">
-                                <h3 className="text-md font-semibold group-hover:text-white">{subject.name}</h3>
+                            <div className="bg-white dark:bg-gray-800 p-6">
+                                <h3 className="text-md md:text-lg font-semibold text-gray-900 dark:text-white">
+                                    {subject.name}
+                                </h3>
                             </div>
                         </div>
                     ))}

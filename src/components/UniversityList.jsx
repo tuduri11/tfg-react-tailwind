@@ -27,18 +27,25 @@ export default function UniversityList() {
     };
 
     return (
-        <div className="text-white flex flex-col w-full min-w-[320px] min-h-screen bg-gray-100 dark:bg-gray-900">
-            <div className="p-4 mx-auto max-w-7xl">
-                <h2 className="text-xl md:text-2xl font-semibold mb-6">Escoge tu universidad:</h2>
+        <div className="flex flex-col items-center w-full min-h-screen bg-gray-100 dark:bg-gray-900">
+            <div className="w-full max-w-7xl px-4 py-6">
+                <h1 className="text-2xl md:text-3xl font-bold text-center text-gray-800 dark:text-white mb-8">
+                    Escoge tu universidad
+                </h1>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {universities.map((university) => (
+                    {universities.map(university => (
                         <div
                             key={university.id}
-                            className="group cursor-pointer rounded-lg border border-gray-200 hover:border-blue-500 shadow-sm overflow-hidden"
+                            className="transform hover:-translate-y-2 transition duration-300 ease-in-out cursor-pointer rounded-lg overflow-hidden shadow-lg"
                             onClick={() => handleSelectUniversity(university.slug)}
                         >
-                            <div className="p-4 bg-white dark:bg-gray-800 hover:bg-blue-500 dark:hover:bg-blue-600">
-                                <h3 className="text-md font-semibold group-hover:text-white">{university.name}</h3>
+                            <div className="bg-white dark:bg-gray-800 p-6">
+                                <h2 className="text-lg text-center md:text-xl font-semibold text-gray-900 dark:text-white">
+                                    {university.name}
+                                </h2>
+                                <p className="text-sm text-center mt-2 text-blue-500 dark:text-blue-300">
+                                    {university.ubication}
+                                </p>
                             </div>
                         </div>
                     ))}

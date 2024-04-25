@@ -214,6 +214,7 @@ export default function Exercise() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const responseData = await response.json();
+            console.log(responseData)
             if (responseData.data && responseData.data.queryresult && responseData.data.queryresult.pods) {
                 setWolfram(responseData.data.queryresult.pods); // Guardar los pods de la respuesta
                 setErrorMessageWolfram(null);
