@@ -24,6 +24,7 @@ import NotFoundPage from './components/NotFoundPage';
 import ProblemList from './components/ProblemList';
 import Exercise from './routes/exercise';
 import Statistics from './routes/statistics';
+import Favourites from './routes/favourites';
 import 'katex/dist/katex.min.css';
 
 function App() {
@@ -44,11 +45,13 @@ function App() {
               <Route path="/about-us" element={<AboutUs />}></Route>
               <Route path="/afterpay" element={<AfterPay />}></Route>
               <Route path="/statistics" element={<Statistics />}></Route>
+              <Route path="/favourites" element={<Favourites />}></Route>
               <Route path="/universidades/:universitySlug" element={<CareerList />} />
               <Route path="/universidades/:universitySlug/:careerSlug" element={<SubjectList />} />
               <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug" element={<TopicList />} />
               <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug/:topicSlug" element={<ProblemList />} />
               <Route path="/universidades/:universitySlug/:careerSlug/:subjectSlug/:topicSlug/:problemSlug" element={<Exercise />} />
+              <Route path="/problemas/:problemSlug" element={<Exercise />} />
             </Routes>
           </div>
           <Footer></Footer>

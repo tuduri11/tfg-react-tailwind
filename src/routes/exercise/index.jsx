@@ -78,7 +78,6 @@ export default function Exercise() {
             })
             .then((data) => {
                 if (data.success) {
-                    console.log("Data received on reload:", data);
                     setProblem(data.problem)
                     setIsFavourite(data.is_favourite);
                     const allOptions = [data.problem.respuesta_correcta, ...data.problem.respuestas_erroneas];
@@ -214,7 +213,6 @@ export default function Exercise() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const responseData = await response.json();
-            console.log(responseData)
             if (responseData.data && responseData.data.queryresult && responseData.data.queryresult.pods) {
                 setWolfram(responseData.data.queryresult.pods); // Guardar los pods de la respuesta
                 setErrorMessageWolfram(null);
@@ -244,7 +242,6 @@ export default function Exercise() {
                 },
                 body: JSON.stringify({ results })
             });
-            console.log('Results sent:', results);
         } catch (error) {
             console.error('Error sending exercise results:', error);
         } finally {

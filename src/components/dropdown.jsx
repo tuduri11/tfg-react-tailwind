@@ -24,6 +24,10 @@ export default function Dropdown() {
     navigate('/statistics');
   };
 
+  const navigateToFavourites = () => {
+    navigate('/favourites');
+  };
+
   async function logOut() {
     let access = await getAccessToken()
     let response = await fetch(`${SERVER_DNS}/accounts/logout`,
@@ -80,7 +84,17 @@ export default function Dropdown() {
                 className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
                 onClick={navigateToPerfil} // Vinculando el evento onClick
               >
-                Tu perfil
+                Perfil
+              </button>
+            </Menu.Item>
+          </div>
+          <div className="py-1">
+            <Menu.Item className="hover:bg-slate-300">
+            <button
+                className="group flex w-full items-center rounded-md px-4 py-2 text-sm text-gray-900"
+                onClick={navigateToFavourites} // Vinculando el evento onClick
+              >
+                Favoritos
               </button>
             </Menu.Item>
           </div>
