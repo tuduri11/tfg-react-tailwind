@@ -29,6 +29,7 @@ export default function Exercise() {
     const [isCorrect, setisCorrect] = useState(null);
     const [isAnswered, setIsAnswered] = useState(false);
 
+    const [operationWolfram, setoperationWolfram] = useState(null);
     const [wolfram, setWolfram] = useState(null);
     const [errorMessageWolfram, setErrorMessageWolfram] = useState('');
     const [showTooltip, setShowTooltip] = useState(false);
@@ -41,7 +42,7 @@ export default function Exercise() {
     const [notFound, setNotFound] = useState(false);
 
     const { mathys, setMathys } = useAuth();
-    const { isLoggedIn} = useAuth();
+    const { isLoggedIn } = useAuth();
     const [isFavourite, setIsFavourite] = useState(false);
 
     const problema = useCallback(async () => {
@@ -79,6 +80,7 @@ export default function Exercise() {
             .then((data) => {
                 if (data.success) {
                     setProblem(data.problem)
+                    setoperationWolfram(data.problem.operacion_wolfram)
                     setIsFavourite(data.is_favourite);
                     const allOptions = [data.problem.respuesta_correcta, ...data.problem.respuestas_erroneas];
                     shuffleArray(allOptions);
@@ -154,7 +156,7 @@ export default function Exercise() {
 
     // Cargar problema y sus datos
     useEffect(() => {
-            problema();
+        problema();
     }, [problema]);
 
     useEffect(() => {
@@ -202,7 +204,7 @@ export default function Exercise() {
             let token = await getAccessToken();
             let response = await fetch(`${SERVER_DNS}/education/get-wolfram`, {
                 method: 'POST',
-                body: JSON.stringify({ query: problem.operacion }),
+                body: JSON.stringify({ query: operationWolfram }),
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json',
@@ -314,9 +316,11 @@ export default function Exercise() {
                         <div className="bg-gray-800 shadow-lg rounded-lg p-6 mb-6 overflow-auto">
                             <BlockMath math={problem.enunciado} />
                         </div>
-                        <div className="bg-gray-800 shadow-lg rounded-lg p-6 mb-6 overflow-auto">
-                            <BlockMath math={problem.operacion} />
-                        </div>
+                        {problem.operacion && (
+                            <div className="bg-gray-800 shadow-lg rounded-lg p-6 mb-6 overflow-auto">
+                                <BlockMath math={problem.operacion} />
+                            </div>
+                        )}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                             {options.map((option, index) => (
                                 <button key={index} onClick={() => userAnswer(option)}
@@ -330,7 +334,10 @@ export default function Exercise() {
                             <div className={`text-center p-4 text-xl rounded-lg ${isCorrect ? 'inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-teal-500 to-teal-700 hover:bg-teal-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100' : 'inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-red-400 to-red-700 hover:bg-red-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100'}`}>
                                 {isCorrect ? 'Respuesta Correcta!' : (
                                     <>
-                                        Respuesta Incorrecta. La correcta es: <InlineMath math={problem.respuesta_correcta} />
+                                        Respuesta Incorrecta. La correcta es:{' '}
+                                        <span style={{ marginLeft: '0.5rem' }}> {/* Aplicar margen izquierdo */}
+                                            <InlineMath math={problem.respuesta_correcta} />
+                                        </span>
                                     </>
                                 )}
                             </div>
