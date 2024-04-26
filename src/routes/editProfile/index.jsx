@@ -11,6 +11,7 @@ import SuccessMessage from '../../components/SuccessMessage';
 import MathySymbol from '../../components/MathySymbol';
 import { useAuth } from '../../utils/AuthContext';
 import ConfirmationModal from '../../components/confirmation_modal';
+import { isAuthenticated } from '../../session';
 
 export default function EditProfile() {
 
@@ -159,6 +160,11 @@ export default function EditProfile() {
 
         const fetchProfile = async () => {
             try {
+                let logged = await isAuthenticated()
+                if (!logged) {
+                    navigate('/login');
+                    return;
+                }
                 let token = await getAccessToken();
                 let jsonData = { "email": email };
                 let response = await fetch(`${SERVER_DNS}/accounts/get-profile`, {

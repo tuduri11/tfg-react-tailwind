@@ -5,6 +5,7 @@ import { SERVER_DNS } from '../../utils/constants';
 import { useAuth } from '../../utils/AuthContext';
 import ErrorPay from '../../components/ErrorPay';
 import PaySuccessful from '../../components/PaySuccessful';
+import { isAuthenticated } from '../../session';
 
 
 
@@ -19,6 +20,11 @@ export default function AfterPay() {
     useEffect(() => {
         const verifyPremiumStatus = async () => {
             try {
+                let logged = await isAuthenticated()
+                if (!logged) {
+                    navigate('/login');
+                    return;
+                }
                 let accessToken = await getAccessToken();
                 setLoading(true);
                 await fetch(`${SERVER_DNS}/accounts/get-ispremium`, {

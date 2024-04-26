@@ -5,6 +5,8 @@ import LoadingComponent from '../../components/LoadingComponent';
 import ErrorMessage from '../../components/ErrorMessage';
 import { Doughnut } from 'react-chartjs-2';
 import { useAuth } from '../../utils/AuthContext';
+import { Navigate, useNavigate } from 'react-router-dom';
+import { isAuthenticated } from '../../session';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 Chart.register(ArcElement, Tooltip, Legend);
 
@@ -13,6 +15,7 @@ export default function Statistics() {
     const [userStats, setUserStats] = useState(null);
     const [errorMessages, setErrorMessages] = useState('');
     const [newUserMessage, setNewUserMessage] = useState('');
+    const navigate= useNavigate();
 
     const [userRanking, setuserRanking] = useState(null);
     const [rankingGeneral, setRankingGeneral] = useState([]);
@@ -23,6 +26,11 @@ export default function Statistics() {
 
     const FetchUserStats = async () => {
         try {
+            let logged = await isAuthenticated()
+                if (!logged) {
+                    navigate('/login');
+                    return;
+                }
             let token = await getAccessToken();
             let response = await fetch(`${SERVER_DNS}/education/userStats`, {
                 method: 'GET',
