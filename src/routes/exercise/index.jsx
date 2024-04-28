@@ -82,9 +82,14 @@ export default function Exercise() {
                     setProblem(data.problem)
                     setoperationWolfram(data.problem.operacion_wolfram)
                     setIsFavourite(data.is_favourite);
-                    const allOptions = [data.problem.respuesta_correcta, ...data.problem.respuestas_erroneas];
-                    shuffleArray(allOptions);
-                    setOptions(allOptions);
+                    if (data.problem.options) {
+                        const allOptions = [data.problem.respuesta_correcta, ...data.problem.respuestas_erroneas];
+                        shuffleArray(allOptions);
+                        setOptions(allOptions);
+                    } else {
+                        setOptions([]);
+                    }
+
                 } else {
                     throw new Error('Failed to load problem');
                 }
@@ -185,7 +190,7 @@ export default function Exercise() {
     }
 
     const solucionIA = async () => {
-        if (!isAnswered || solutionRequested) {
+        if ((options.length > 0 && !isAnswered) || solutionRequested) {
             return;
         }
 
@@ -318,9 +323,10 @@ export default function Exercise() {
                         </div>
                         {problem.operacion && (
                             <div className="bg-gray-800 shadow-lg rounded-lg p-6 mb-6 overflow-auto">
-                                <BlockMath math={problem.operacion} />
+                                <BlockMath math={problem.operacion} className="text-base md:text-sm lg:text-base" />
                             </div>
                         )}
+                        {/* Si no hay options no se ensña nada directamente. */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
                             {options.map((option, index) => (
                                 <button key={index} onClick={() => userAnswer(option)}
@@ -331,13 +337,13 @@ export default function Exercise() {
                             ))}
                         </div>
                         {isAnswered && (
-                            <div className={`text-center p-4 text-xl rounded-lg ${isCorrect ? 'inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-teal-500 to-teal-700 hover:bg-teal-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100' : 'inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-red-400 to-red-700 hover:bg-red-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100'}`}>
+                            <div className={`text-center px-4 py-2 text-xl rounded-lg ${isCorrect ? 'flex items-center justify-center w-full font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-teal-500 to-teal-700 hover:bg-teal-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100' : 'flex flex-col items-center justify-center w-full font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-red-400 to-red-700 hover:bg-red-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100'}`}>
                                 {isCorrect ? 'Respuesta Correcta!' : (
                                     <>
                                         Respuesta Incorrecta. La correcta es:{' '}
-                                        <span style={{ marginLeft: '0.5rem' }}> {/* Aplicar margen izquierdo */}
+                                        <div style={{ marginTop: '0.5rem', width: '100%' }}>
                                             <InlineMath math={problem.respuesta_correcta} />
-                                        </span>
+                                        </div>
                                     </>
                                 )}
                             </div>
@@ -347,17 +353,19 @@ export default function Exercise() {
                                 Otro Ejercicio
                             </button>
                             <div className="relative" onMouseEnter={handleMouseEnter} onMouseLeave={handleMouseLeave}>
-                                <button onClick={solucionIA} disabled={!isLoggedIn || !isAnswered || solutionRequested || wolfram != null} className="inline-flex items-center justify-center space-x-2 rounded-lg border border-blue-600 bg-blue-500 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-700 hover:bg-blue-700 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100 disabled:opacity-50 disabled:cursor-not-allowed">
+                                <button onClick={solucionIA} disabled={!isLoggedIn || (options.length > 0 && !isAnswered) || solutionRequested || wolfram != null} className="inline-flex items-center justify-center space-x-2 rounded-lg border border-blue-600 bg-blue-500 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-700 hover:bg-blue-700 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100 disabled:opacity-50 disabled:cursor-not-allowed">
                                     <span>Solución Completa</span>
                                     <MathySymbol></MathySymbol>
                                 </button>
-                                {showTooltip && !isAnswered && (
+                                {showTooltip && (options.length > 0 && !isAnswered) && (
                                     <div className="absolute border -top-12 left-1/2 transform -translate-x-1/2 bg-black text-white text-xs py-1 px-6 w-64 rounded shadow-lg z-10">
                                         Por favor, responde al ejercicio para ver la solución completa.
                                     </div>
                                 )}
                             </div>
                         </div>
+
+
                         {wolfram && (
                             wolfram.map((pod, index) => (
                                 <div key={index} className="mb-4 p-4 bg-gray-700 rounded-lg">
