@@ -8,7 +8,7 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [mathys, setMathys] = useState(0);
+    const [mathys, setMathys] = useLocalStorage('mathys', 0);
     const [isSendingResults, setIsSendingResults]= useState(false);
 
     const [isPremium, setIsPremium] = useLocalStorage('isPremium', false);
@@ -18,7 +18,11 @@ export const AuthProvider = ({ children }) => {
             .then(res => {
                 setIsLoggedIn(res);
                 if (res) {
-                    fetchMathys();
+                    // Solo recupera los mathys si no están ya almacenados
+                    const storedMathys = localStorage.getItem('mathys');
+                    if (!storedMathys) {
+                        fetchMathys();
+                    }
                 }
             })
             .catch(error => console.error('Error checking authentication:', error))
