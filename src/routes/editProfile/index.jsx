@@ -51,13 +51,13 @@ export default function EditProfile() {
     const [showSuccessMessage, setShowSuccessMessage] = useState(false);
 
     const [showSuccessMessageCancel, setShowSuccessMessageCancel] = useState(false);
-    const [SuccesMessageCancel, setSuccesMessageCancel]= useState('');
+    const [SuccesMessageCancel, setSuccesMessageCancel] = useState('');
 
     const [showFailMessageCancel, setShowFailMessageCancel] = useState(false);
-    const [FailMessageCancel, setFailMessageCancel]= useState('');
+    const [FailMessageCancel, setFailMessageCancel] = useState('');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    
+
     // Función para manejar la confirmación del modal
     const handleModalConfirm = () => {
         handleCancelSubscription();
@@ -81,7 +81,6 @@ export default function EditProfile() {
         setCognoms(res.surname);
         setUniversities(res.university);
         setEmail(res.email);
-        setData(res.birthdate);
         //Local premium
         setIsPremium(res.premium);
         setPremium(res.premium)
@@ -269,7 +268,7 @@ export default function EditProfile() {
                 //Ahora podrá aparecer el mensaje de success
                 setShowSuccessMessageCancel(true);
                 setSuccesMessageCancel(data.msg)
-                
+
             } else {
                 setShowFailMessageCancel(true)
                 setFailMessageCancel(data.msg)
@@ -278,7 +277,7 @@ export default function EditProfile() {
             console.error('Error al cancelar la suscripción:', error);
         }
     };
-    
+
 
 
     useEffectWithoutFirstRun(validateNewPassword, [newPassword])
@@ -328,17 +327,6 @@ export default function EditProfile() {
                                         </div>
                                         <div className="flex-grow">
                                             <p className="text-gray-900 dark:text-gray-100"><strong>Universidad:</strong> {universities ? universities.name : "No especificado"}</p>
-                                        </div>
-                                    </div>
-
-                                    <div className="flex items-center space-x-4">
-                                        <div className="flex-shrink-0">
-                                            <div className="h-10 w-10 rounded-full bg-slate-400 flex items-center justify-center">
-                                                <span className="text-xl text-white">&#128197;</span>
-                                            </div>
-                                        </div>
-                                        <div className="flex-grow">
-                                            <p className="text-gray-900 dark:text-gray-100"><strong>Fecha de cumpleaños:</strong> {data}</p>
                                         </div>
                                     </div>
 
@@ -398,7 +386,7 @@ export default function EditProfile() {
                             )}
                             {/*Si todo va correctamente, enviamos mensaje de confirmación con el componente SuccessMessageCancel*/}
                             {showSuccessMessageCancel && <SuccessMessage message={SuccesMessageCancel} />}
-                            
+
                             {/*Si hay algun error enviado desde backend: */}
                             {showFailMessageCancel && <ErrorMessage message={FailMessageCancel} />}
                         </div>

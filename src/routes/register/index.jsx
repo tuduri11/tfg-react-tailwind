@@ -30,11 +30,6 @@ export default function Index() {
     const [cognomsError, setCognomsError] = useState(false);
     const [cognomsErrorMessages, setCognomsErrorMessages] = useState('');
 
-    const [data, setData] = useState('');
-    const [dataError, setDataError] = useState(false);
-    const [dateErrorMessages, setDateErrorMessages] = useState('')
-
-
     const [universities, setUniversities] = useState([]);
     const [selectedUniversity, setSelectedUniversity] = useState('');
     const [universityError, setUniversityError] = useState(false);
@@ -61,10 +56,6 @@ export default function Index() {
         isAuthenticated().then(res => setIsLoggedIn(res));
     }, [setIsLoggedIn]);
 
-    const current = new Date();
-    const currentDate = `${current.getFullYear()}-${current.getMonth() + 1}-${current.getDate()}`;
-
-
     //Validations
     const validateEmail = useCallback(() => {
         const mailformat = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/gi
@@ -87,7 +78,7 @@ export default function Index() {
         if (nom === '') {
             setNameErrorMessages('El nombre es necesario');
             setNomError(true);
-        } else if (nom.match(/^[A-Za-zñÑçÇáéíóúÁÉÍÓÚüÜ]+$/) === null) {
+        } else if (nom.match(/^[A-Za-zñÑçÇáàéèíìòùóúÀÈÌÒÙÁÉÍÓÚüÜ]+$/) === null) {
             setNameErrorMessages('El nombre solo puede tener letras sin espacios');
             setNomError(true);
         } else {
@@ -102,35 +93,13 @@ export default function Index() {
         if (cognoms === '') {
             setCognomsErrorMessages('Los apellidos son necesarios');
             setCognomsError(true);
-        } else if (cognoms.match(/^[A-Za-zñÑçÇáéíóúÁÉÍÓÚüÜ\s]+$/) === null) {
+        } else if (cognoms.match(/^[A-Za-zñÑçÇáàèìòùÀÈÌÒÙéíóúÁÉÍÓÚüÜ\s]+$/) === null) {
             setCognomsErrorMessages('Formato incorrecto');
             setCognomsError(true);
         } else {
             setCognomsError(false);
         }
     }, [cognoms])
-
-
-    const validateData = useCallback(() => {
-        console.log('validate data')
-        let date = new Date(data)
-        let current = new Date(currentDate)
-        if (data === '') {
-            setDateErrorMessages('La fecha es necesaria')
-            setDataError(true)
-        } else if (date >= current) {
-            setDateErrorMessages('La fecha de aniversario no puede estar en el futuro');
-            setDataError(true);
-        } else if (calculateAge(date, current) < 15) {
-            setDateErrorMessages('La edad mínima es de 15 años');
-            setDataError(true);
-        }
-        else {
-            setDataError(false)
-            setDateErrorMessages('')
-        }
-
-    }, [data])
 
     const validatePassword = useCallback(() => {
         if (password.length < 8) {
@@ -174,16 +143,14 @@ export default function Index() {
 
     const validateParameters = useCallback(() => {
         validateEmail()
-        validateData()
         validateCognoms()
         validateNom()
         validatePassword()
         validateUniversity()
-    }, [validateEmail, validatePassword, validateNom, validateCognoms, validateData, validateUniversity])
+    }, [validateEmail, validatePassword, validateNom, validateCognoms, validateUniversity])
 
     useEffectWithoutFirstRun(validateEmail, [email])
     useEffectWithoutFirstRun(validatePassword, [password])
-    useEffectWithoutFirstRun(validateData, [data])
     useEffectWithoutFirstRun(validateNom, [nom])
     useEffectWithoutFirstRun(validateCognoms, [cognoms])
     useEffectWithoutFirstRun(validateUniversity, [selectedUniversity])
@@ -227,7 +194,8 @@ export default function Index() {
                 console.error('Error fetching universities:', error);
             });
     }, []);
-    //Si el registro es correcto, iniciamos sesion directamente. En teoria no debe haber errores.
+
+    //Si el registro es correcto, iniciamos sesion directamente.
     async function login(email, password) {
         setErrorMessages('')
         if (!emailError && !passwordError) {
@@ -281,14 +249,11 @@ export default function Index() {
     async function handleSubmit(event) {
         event.preventDefault();
         setErrorMessages('')
-        if (!emailError && !passwordError && !nomError && !cognomsError && !dataError && !universityError) {
+        if (!emailError && !passwordError && !nomError && !cognomsError && !universityError) {
             setIsSubmitting(true)
-            console.log('Submitted')
             //Si no hay la universidad o el user no tiene universidad, pasamos un Null.
             let universityValue = (selectedUniversity === "no-listed" || selectedUniversity === "no-university") ? null : selectedUniversity;
-
-            console.log(universityValue)
-            let jsonData = { "email": emailBase(email), "password": password, "name": nameBase(nom), "surname": surnameBase(cognoms), "university": universityValue, "birthdate": data }
+            let jsonData = { "email": emailBase(email), "password": password, "name": nameBase(nom), "surname": surnameBase(cognoms), "university": universityValue}
             let response = fetch(`${SERVER_DNS}/accounts/register`,
                 {
                     method: 'POST',
@@ -416,19 +381,6 @@ export default function Index() {
                                                 />
                                                 {cognomsError && <p className="text-red-500 text-xs italic">{cognomsErrorMessages}</p>}
                                             </div>
-                                            {/*Fecha nacimiento */}
-                                            <div className={`space-y-1 ${dataError ? 'text-red-500' : ''}`}>
-                                                <label htmlFor="fecha" className="text-sm font-medium">
-                                                    Fecha de nacimiento
-                                                </label>
-                                                <input
-                                                    type="date"
-                                                    value={data}
-                                                    onChange={(e) => setData(e.target.value)}
-                                                    className="block w-full rounded-lg border border-gray-200 px-5 py-3 leading-6 placeholder-gray-500 focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50 dark:border-gray-600 dark:bg-gray-800 dark:placeholder-gray-400 dark:focus:border-blue-500"
-                                                />
-                                                {dataError && <p className="text-red-500 text-xs italic">{dateErrorMessages}</p>}
-                                            </div>
                                             {/*Universidad */}
                                             <div className={`space-y-1 ${universityError ? 'text-red-500' : ''}`}>
                                                 <label htmlFor="universidad" className="text-sm font-medium">
@@ -502,7 +454,7 @@ export default function Index() {
                                                     className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-blue-700 bg-blue-700 px-6 py-3 font-semibold leading-6 text-white hover:border-blue-600 hover:bg-blue-600 hover:text-white focus:ring focus:ring-blue-400 focus:ring-opacity-50 active:border-blue-700 active:bg-blue-700 dark:focus:ring-blue-400 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-100"
                                                     isLoading={isSubmitting}
                                                     onClick={validateParameters}
-                                                    disabled={emailError || passwordError || nomError || cognomsError || dataError || universityError}
+                                                    disabled={emailError || passwordError || nomError || cognomsError || universityError}
                                                 >
                                                     <span>Regístrame</span>
                                                 </button>
