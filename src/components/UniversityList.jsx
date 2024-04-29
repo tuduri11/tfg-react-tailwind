@@ -39,7 +39,7 @@ export default function UniversityList() {
                             className="transform hover:-translate-y-2 transition duration-300 ease-in-out cursor-pointer rounded-lg overflow-hidden shadow-lg"
                             onClick={() => handleSelectUniversity(university.slug)}
                         >
-                            <div className="bg-white dark:bg-gray-800 p-6">
+                            <div className="bg-white dark:bg-gray-800 p-6 flex flex-col justify-between h-full">
                                 <h2 className="text-lg text-center md:text-xl font-semibold text-gray-900 dark:text-white">
                                     {university.name}
                                 </h2>
