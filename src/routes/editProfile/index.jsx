@@ -11,11 +11,11 @@ import SuccessMessage from '../../components/SuccessMessage';
 import MathySymbol from '../../components/MathySymbol';
 import { useAuth } from '../../utils/AuthContext';
 import ConfirmationModal from '../../components/confirmation_modal';
-import { isAuthenticated } from '../../session';
+import { isAuthenticated, getRefreshToken } from '../../session';
+import toast from 'react-hot-toast';
+import Cookies from 'js-cookie'
 
 export default function EditProfile() {
-
-
 
     const [products, setProducts] = useState();
 
@@ -57,22 +57,38 @@ export default function EditProfile() {
     const [FailMessageCancel, setFailMessageCancel] = useState('');
 
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [isModalOpenDelete, setIsModalOpenDelete] = useState(false);
 
-    // Función para manejar la confirmación del modal
-    const handleModalConfirm = () => {
+    // Función para manejar la confirmación de la cancelacion de la subscripcion
+    const handleModalConfirmCancelSub = () => {
         handleCancelSubscription();
         setIsModalOpen(false); // Cierra el modal después de confirmar
     };
 
     // Función para cerrar el modal sin realizar ninguna acción
-    const handleModalClose = () => {
+    const handleModalCloseCancel = () => {
         setIsModalOpen(false);
+    };
+
+    // Función para manejar la confirmación de la eliminacion de la cuenta
+    const handleModalConfirmDelete = () => {
+        handleDeleteAccount();
+        setIsModalOpenDelete(false); // Cierra el modal después de confirmar
+    };
+
+    // Función para cerrar el modal sin realizar ninguna acción
+    const handleModalCloseDelete = () => {
+        setIsModalOpenDelete(false);
     };
 
 
     const navigate = useNavigate();
     const navigateToPremium = () => {
         navigate('/premium');
+
+    };
+    const navigateToHome = () => {
+        navigate('/register');
 
     };
 
@@ -278,6 +294,67 @@ export default function EditProfile() {
         }
     };
 
+    //LogOut para antes de borrar la cuenta
+    async function logOut() {
+        let access = await getAccessToken()
+        let response = await fetch(`${SERVER_DNS}/accounts/logout`,
+          {
+            method: 'POST',
+            mode: 'cors',
+            body: JSON.stringify({ 'access': access, 'refresh': getRefreshToken() }),
+            headers: {
+              'Authorization': `Bearer ${access}`,
+              'Content-Type': 'application/json',
+            }
+          })
+          .then(response => response.json())
+          .catch((error) => {
+            console.error('Something went wrong')
+          })
+    
+        const { success} = await response
+        if (success) {
+          Cookies.remove('access_token')
+          Cookies.remove('refresh_token')
+          localStorage.removeItem('chatMessages');
+          navigateToHome();
+        }
+      }
+
+    //Para cancelar la subscripción
+    const handleDeleteAccount = async () => {
+        try {
+            logOut();
+
+            let token = await getAccessToken();
+            let response = await fetch(`${SERVER_DNS}/accounts/delete-account`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json',
+                },
+            });
+            const data = await response.json();
+            if (data.success) {
+            } else {
+                toast.error(data.msg, {
+                    style: {
+                        border: '1px solid #E53E3E', // Un color rojo que destaque para el borde
+                        padding: '16px',
+                        color: '#FFFFFF', // Texto blanco para mayor legibilidad en fondos oscuros
+                        backgroundColor: '#1A202C', // Un gris oscuro para el fondo, consistente con el tema oscuro de la página
+                    },
+                    iconTheme: {
+                        primary: '#E53E3E', // Rojo para el icono
+                        secondary: '#FFFFFF', // Fondo blanco para el icono, para contrastar con el rojo
+                    }
+                });
+            }
+        } catch (error) {
+            console.error('Error al eliminar su cuenta:', error);
+        }
+    };
+
 
 
     useEffectWithoutFirstRun(validateNewPassword, [newPassword])
@@ -365,11 +442,11 @@ export default function EditProfile() {
                                         onClick={() => setIsModalOpen(true)}>
                                         Cancelar suscripción
                                     </button>
-                                    {/* ConfirmationModal colocado al final del return de tu componente */}
+                                    {/* ConfirmationModal para la confirmacion de la cancelacion de la subscripcion */}
                                     <ConfirmationModal
                                         isOpen={isModalOpen}
-                                        onClose={handleModalClose}
-                                        onConfirm={handleModalConfirm}
+                                        onClose={handleModalCloseCancel}
+                                        onConfirm={handleModalConfirmCancelSub}
                                         title="Cancelar Suscripción"
                                         description="¿Estás seguro de que deseas cancelar tu suscripción?"
                                     />
@@ -459,6 +536,23 @@ export default function EditProfile() {
                                 Cambiar contraseña
                             </button>
                         </form>
+                    </section>
+                    <section className="w-full max-w-60 py-12">
+                        <div >
+                            <button
+                                className="inline-flex w-full items-center justify-center space-x-2 rounded-lg border border-red-500 bg-red-500 px-6 py-3 font-semibold leading-6 text-white hover:border-red-400 hover:bg-red-400 hover:text-white focus:ring focus:ring-red-300 focus:ring-opacity-50 active:border-red-500 active:bg-red-500 dark:focus:ring-red-300 dark:focus:ring-opacity-90 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-110"
+                                onClick={() => setIsModalOpenDelete(true)}
+                            >
+                                Eliminar Cuenta
+                            </button>
+                            <ConfirmationModal
+                                isOpen={isModalOpenDelete}
+                                onClose={handleModalCloseDelete}
+                                onConfirm={handleModalConfirmDelete}
+                                title="Eliminar cuenta"
+                                description="¿Estás seguro de que deseas eliminar tu cuenta?"
+                            />
+                        </div>
                     </section>
                 </div>
 
