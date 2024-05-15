@@ -467,7 +467,7 @@ export default function Index() {
                                         Ya tienes una cuenta?
                                         <button
                                             onClick={navigateToLogIn}
-                                            className="font-medium text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
+                                            className="ml-2 font-medium text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
                                         >
                                             Log in
                                         </button>
