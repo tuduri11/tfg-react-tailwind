@@ -201,7 +201,7 @@ export default function Login() {
                   Aun no tienes una cuenta?
                   <button
                     onClick={navigateToRegister}
-                    className="font-medium text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
+                    className="ml-2 font-medium text-blue-600 hover:text-blue-400 dark:text-blue-400 dark:hover:text-blue-300"
                   >
                     Regístrate
                   </button>
