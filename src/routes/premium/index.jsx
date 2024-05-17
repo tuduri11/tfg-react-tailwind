@@ -22,7 +22,7 @@ export default function Premium() {
             Potencia tu aprendizaje. ¡Hazte premium!
           </h2>
           <p className="text-base text-gray-200 md:text-lg">
-            Mejora tu experiencia. Hazte premium y disfruta de 150 "Mathys" al mes. ¡Únete ahora!
+            Mejora tu experiencia. Hazte premium y disfruta de 300 "Mathys" al mes. ¡Únete ahora!
           </p>
         </div>
         <div className=" grid gap-10 row-gap-5 sm:row-gap-10 lg:grid-cols-2">
@@ -88,7 +88,7 @@ export default function Premium() {
                       <circle cx="12" cy="12" fill="none" r="11" stroke="currentColor" />
                     </svg>
                   </div>
-                  <p className="font-medium text-gray-800">150 Mathys mensuales*</p>
+                  <p className="font-medium text-gray-800">300 Mathys mensuales*</p>
                 </li>
               </ul>
             </div>
