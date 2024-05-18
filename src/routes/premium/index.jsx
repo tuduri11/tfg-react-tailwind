@@ -13,15 +13,15 @@ export default function Premium() {
     <div className="relative overflow-hidden dark:bg-gray-900">
       <div className="bg-gray-900 mx-auto sm:max-w-xl md:max-w-full lg:max-w-screen-xl md:px-24 lg:px-8 lg:py-20 ">
         <div className="max-w-xl mb-10 md:mx-auto sm:text-center lg:max-w-2xl md:mb-12">
-          <div>
+          <div className = "text-center">
             <p className="inline-block px-3 py-1 mb-4 text-xs font-semibold tracking-wider text-white uppercase rounded-full bg-gradient-to-r from-teal-400 to-teal-600">
               Premium
             </p>
           </div>
-          <h2 className="max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white   sm:text-4xl md:mx-auto">
+          <h2 className="text-center max-w-lg mb-6 font-sans text-3xl font-bold leading-none tracking-tight text-white   sm:text-4xl md:mx-auto">
             Potencia tu aprendizaje. ¡Hazte premium!
           </h2>
-          <p className="text-base text-gray-200 md:text-lg">
+          <p className=" text-center text-base text-gray-200 md:text-lg">
             Mejora tu experiencia. Hazte premium y disfruta de 300 "Mathys" al mes. ¡Únete ahora!
           </p>
         </div>

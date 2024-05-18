@@ -339,14 +339,14 @@ export default function EditProfile() {
             } else {
                 toast.error(data.msg, {
                     style: {
-                        border: '1px solid #E53E3E', // Un color rojo que destaque para el borde
+                        border: '1px solid #E53E3E', 
                         padding: '16px',
-                        color: '#FFFFFF', // Texto blanco para mayor legibilidad en fondos oscuros
-                        backgroundColor: '#1A202C', // Un gris oscuro para el fondo, consistente con el tema oscuro de la página
+                        color: '#FFFFFF', 
+                        backgroundColor: '#1A202C', 
                     },
                     iconTheme: {
-                        primary: '#E53E3E', // Rojo para el icono
-                        secondary: '#FFFFFF', // Fondo blanco para el icono, para contrastar con el rojo
+                        primary: '#E53E3E', 
+                        secondary: '#FFFFFF', 
                     }
                 });
             }

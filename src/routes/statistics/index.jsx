@@ -142,8 +142,8 @@ export default function Statistics() {
 
     return (
         <div id="page-container" className="overflow-auto text-white mx-auto flex min-h-screen w-full flex-col bg-gray-900 p-4">
-            <div className="mx-auto max-w-5xl p-5 sm:p-3">
-                <h1 className="text-2xl font-bold text-center mb-6">Tus Estadísticas</h1>
+            <div className="mx-auto max-w-5xl p-5 sm:p-3 w-full">
+                <h1 className="text-3xl font-bold text-center mb-6">Tus Estadísticas</h1>
                 {newUserMessage && (
                     <div className="max-w-md mx-auto mb-4 bg-white rounded-lg border border-gray-200 shadow-md dark:bg-gray-800 dark:border-gray-700">
                         <div className="p-5">
@@ -157,8 +157,8 @@ export default function Statistics() {
                     </div>
                 )}
                 {userStats ? (
-                    <div className="p-4 bg-gray-700 rounded shadow flex flex-col items-center space-y-4">
-                        <div className="w-full max-w-xs">
+                    <div className="p-4 bg-gray-700 rounded shadow flex flex-col items-center space-y-4 w-full">
+                        <div className="w-full max-w-xs mx-auto">
                             <Doughnut data={chartData} options={chartOptions} />
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full text-center">
@@ -184,31 +184,33 @@ export default function Statistics() {
                     </div>
                 )}
                 {rankingGeneral.length > 0 && (
-                    <div className="mt-8">
-                        <h2 className="text-2xl font-bold text-center text-whitw">Ranking Mundial</h2>
+                    <div className="mt-8 w-full">
+                        <h2 className="text-2xl font-bold text-center text-white">Ranking Mundial</h2>
                         <div className="mt-4 bg-white rounded-lg shadow-lg overflow-hidden">
-                            <table className="min-w-full leading-normal">
-                                <thead>
-                                    <tr className="bg-gray-700 text-white">
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Posición</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Estudiante</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Intentos</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Aciertos</th>
-                                        <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Tasa de Éxito (%)</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white">
-                                    {rankingGeneral.map((student, index) => (
-                                        <tr key={index} className={`hover:bg-gray-200 ${userRanking === index + 1 ? 'bg-amber-200' : ''}`}>
-                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-900 font-bold">{index + 1}</td>
-                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.student_name}</td>
-                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.num_attempts}</td>
-                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.success}</td>
-                                            <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600 font-bold">{student.success_rate}</td>
+                            <div className="overflow-x-auto">
+                                <table className="min-w-full leading-normal w-full">
+                                    <thead>
+                                        <tr className="bg-gray-700 text-white">
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Posición</th>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Estudiante</th>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Intentos</th>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Aciertos</th>
+                                            <th className="px-5 py-3 border-b-2 border-gray-200 text-left text-xs font-semibold uppercase tracking-wider">Tasa de Éxito (%)</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody className="bg-white">
+                                        {rankingGeneral.map((student, index) => (
+                                            <tr key={index} className={`hover:bg-gray-200 ${userRanking === index + 1 ? 'bg-amber-200' : ''}`}>
+                                                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-900 font-bold">{index + 1}</td>
+                                                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.student_name}</td>
+                                                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.num_attempts}</td>
+                                                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600">{student.success}</td>
+                                                <td className="px-5 py-4 border-b border-gray-200 text-sm text-gray-600 font-bold">{student.success_rate}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 )}
