@@ -13,6 +13,7 @@ export default function AfterPay() {
     const { isPremium, setIsPremium } = useAuth();
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(true);
+    const { fetchMathys } = useAuth();
 
     const navigate = useNavigate();
 
@@ -39,6 +40,7 @@ export default function AfterPay() {
                         if (data.success) {
                             setSuccess(data.msg); // Si es premium, success sera true.
                             setIsPremium(data.msg); //actualizamos la variable local para saber en todo momento que es premium.
+                            fetchMathys()
                         } else {
                             console.error('Error al cargar la información:', data.msg);
                         }
