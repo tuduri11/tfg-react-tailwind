@@ -1,4 +1,5 @@
 import './App.css';
+import { useEffect } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
@@ -28,6 +29,10 @@ import Favourites from './routes/favourites';
 import 'katex/dist/katex.min.css';
 
 function App() {
+  useEffect(() => {
+    //Forzar el modo oscuro
+    document.documentElement.classList.add('dark');
+  }, []);
   return (
     <AuthProvider>
       <Router>
