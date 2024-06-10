@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as fasFaHeart } from '@fortawesome/free-solid-svg-icons'; // Corazón relleno
 import { faHeart as farFaHeart } from '@fortawesome/free-regular-svg-icons'; // Corazón vacío
 
+//Boton para poner favoritos los ejercicios. Tiene dos estados: corazon relleno o corazon vacio.
 const FavouriteButton = ({ isFavourite, onClick }) => {
     return (
         <button

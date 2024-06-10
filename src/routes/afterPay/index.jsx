@@ -8,7 +8,7 @@ import PaySuccessful from '../../components/PaySuccessful';
 import { isAuthenticated } from '../../session';
 
 
-
+//Esta ruta es reconducida despues del pago desde stripe. Aqui nos indicara si todo ha ido correctamente o incorrectamente.
 export default function AfterPay() {
     const { isPremium, setIsPremium } = useAuth();
     const [success, setSuccess] = useState(false);

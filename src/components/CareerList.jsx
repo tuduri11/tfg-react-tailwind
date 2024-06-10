@@ -7,6 +7,7 @@ import EmptyList from './EmptyList';
 import LoadingComponent from './LoadingComponent';
 import ErrorState from './ErrorState';
 
+//Lista de carreras de una universidad en concreto
 export default function CareerList() {
     const { universitySlug } = useParams();
     const [universityName, setUniversityName]= useState('');
@@ -52,13 +53,15 @@ export default function CareerList() {
         navigate(`/universidades/${universitySlug}/${careerSlug}`)
     };
     
+    //El componente de Loading seguirá saliendo hasta que se carguen las carreras
     if (loading){
         return <LoadingComponent></LoadingComponent>
     }
+    //Si no se encuentran carreras, saldra el componente de universidad no encontrada
     if (notFound) {
         return <NotFoundComponent message="Universidad no encontrada" />;
     }
-
+    
     if (errorMessage) {
         return <ErrorState errorMessage={errorMessage}></ErrorState>
     }

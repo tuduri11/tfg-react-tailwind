@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+//Cuando la URL dentro de la aplicacion no existe, saldra este componente:
 export default function NotFoundPage() {
     const navigate = useNavigate();
     const navigateToHome = () => {

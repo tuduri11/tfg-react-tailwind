@@ -22,7 +22,7 @@ export default function Favourites() {
     const navigate = useNavigate();
     const { isLoggedIn } = useAuth();
 
-
+    //Obtener la lista de los ejercicios favoritos al entrar en el componente.
     useEffect(() => {
         async function getFavourites() {
             setLoading(true)
@@ -62,6 +62,7 @@ export default function Favourites() {
         getFavourites();
     }, [])
 
+    //Funcion para marcar si un ejercicio es favorito o no.
     const toggleFavourite = async (problemSlug, index) => {
         try {
             let token = await getAccessToken();

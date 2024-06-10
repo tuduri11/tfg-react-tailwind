@@ -5,6 +5,7 @@ import logo from "../assets/MathCampus-logos_transparent_navbar.png"
 import { useAuth } from '../utils/AuthContext';
 import MathySymbol from './MathySymbol';
 
+//Items para ver cuando no se esta logueado
 const defaultItems = [
     {
         slug: "/universidades/",
@@ -28,6 +29,8 @@ const defaultItems = [
     }
 
 ];
+
+//Items de cuando estamos logueados
 const otherItems = [
     {
         slug: "/universidades/",

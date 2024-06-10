@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHeart as farFaHeart } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router-dom';
 
+//Componente cuando no tenemos favoritos en nuestra lista.
 function NoFavourites() {
     const navigate = useNavigate();
 

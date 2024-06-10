@@ -82,6 +82,7 @@ export default function Exercise() {
                     setProblem(data.problem)
                     setoperationWolfram(data.problem.operacion_wolfram)
                     setIsFavourite(data.is_favourite);
+                    //si el problema tiene solucion, cogemos las 4 posibles soluciones y las ponemos aleatorias.
                     if (data.problem.options) {
                         const allOptions = [data.problem.respuesta_correcta, ...data.problem.respuestas_erroneas];
                         shuffleArray(allOptions);
@@ -103,6 +104,7 @@ export default function Exercise() {
             .finally(() => setLoading(false));
     }, [problemSlug]);
 
+    //Añadir o eliminar de favoritos un ejercicio.
     const toggleFavourite = async () => {
         try {
             let token = await getAccessToken();
@@ -168,7 +170,7 @@ export default function Exercise() {
         batchDataRef.current = batchData;  // Mantener la referencia actualizada
     }, [batchData]);
 
-
+    //Una vez el usuario ha respondido, comprobamos si la respuesta es correcta y guardamos el booleano. Tambien marcamos que se ha respondido.
     function userAnswer(answer) {
         const correct = answer === problem.respuesta_correcta;
         setselectedOptions(answer);
@@ -179,16 +181,19 @@ export default function Exercise() {
         handleExerciseResult(correct);
     }
 
+    //Funcion para enseñar un mensaje de informacion
     function handleMouseEnter() {
         if (!isAnswered) {
             setShowTooltip(true);
         }
     }
 
+    //Funcion para dejar de enseñar ese mensaje de informacion
     function handleMouseLeave() {
         setShowTooltip(false);
     }
 
+    //Funcion para llamar a servidor y conseguir la solucion completa paso a paso.
     const solucionIA = async () => {
         if ((options.length > 0 && !isAnswered) || solutionRequested) {
             return;
@@ -220,6 +225,7 @@ export default function Exercise() {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const responseData = await response.json();
+            //Si existe una solucion que nos interesa, la cogemos:
             if (responseData.data && responseData.data.queryresult && responseData.data.queryresult.pods) {
                 setWolfram(responseData.data.queryresult.pods); // Guardar los pods de la respuesta
                 setErrorMessageWolfram(null);
@@ -237,6 +243,7 @@ export default function Exercise() {
         }
     }
 
+    //Funcion para enviar los resultados de los ejercicios del cliente (correcto o incorrecto)
     const sendResultsToServer = useCallback(async (results) => {
         setIsSendingResults(true);
         try {
@@ -256,6 +263,7 @@ export default function Exercise() {
         }
     }, []);
 
+    //A partir de los 5 ejercicios resueltos, se envia al servidor para no tener perdidas.
     const handleExerciseResult = useCallback((isCorrect) => {
         setBatchData(currentData => {
             const newData = [...currentData, { correct: isCorrect }];

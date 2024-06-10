@@ -12,6 +12,7 @@ import { useAuth } from '../utils/AuthContext';
 import { getAccessToken } from '../session';
 import { isAuthenticated } from '../session';
 
+//Lista de problemas de un tema en concreto.
 export default function ProblemList() {
     const { universitySlug, careerSlug, subjectSlug, topicSlug } = useParams();
     const [topicName, setTopicName] = useState('');
@@ -75,6 +76,7 @@ export default function ProblemList() {
         problemsbyTopic()
     }, [topicSlug]);
 
+    //Funcion para marcar un ejercicio como favorito o quitarlo.
     const toggleFavourite = async (problemSlug, index) => {
         try {
             let token = await getAccessToken();
@@ -90,6 +92,7 @@ export default function ProblemList() {
                 let updatedProblems = [...problems];
                 updatedProblems[index].isFavourite = data.isFavourite;
                 setProblems(updatedProblems);
+                //Si todo ha ido correcto, saldrá un toast de confirmacion arriba de la pantalla.
                 toast.success(data.msg, {
                     style: {
                         border: '1px solid #10b981',
@@ -103,6 +106,7 @@ export default function ProblemList() {
                     },
                 });
             } else {
+                //Si da error, saldra un toast de error arriba en la pantalla.
                 toast.error(data.msg, {
                     style: {
                         border: '1px solid #E53E3E', // Un color rojo que destaque para el borde

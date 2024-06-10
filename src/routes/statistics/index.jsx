@@ -10,6 +10,7 @@ import { isAuthenticated } from '../../session';
 import { Chart, ArcElement, Tooltip, Legend } from 'chart.js';
 Chart.register(ArcElement, Tooltip, Legend);
 
+//Ruta para ver las estadisticas del usuario y el ranking general.
 export default function Statistics() {
     const { isSendingResults } = useAuth();
     const [userStats, setUserStats] = useState(null);
@@ -24,6 +25,7 @@ export default function Statistics() {
     const [statsLoaded, setStatsLoaded] = useState(false);
     const [rankingLoaded, setRankingLoaded] = useState(false);
 
+    //Funcion para obtener las estadisticas del usuario propio.
     const FetchUserStats = async () => {
         try {
             let logged = await isAuthenticated()
@@ -42,6 +44,7 @@ export default function Statistics() {
             const data = await response.json();
             if (data.success) {
                 setUserStats(data.data)
+                //Si el usuario no tiene intentos (y es nuevo), en vez de las estadisticas le saldra un mensaje.
                 if (data.data.num_attempts === 0) {
                     setNewUserMessage('¡A qué esperas para hacer algunos ejercicios y ver tus estadísticas!')
                 }
@@ -55,6 +58,7 @@ export default function Statistics() {
         }
     };
 
+    //Funcion para obtener el ranking general de la aplicacion
     const FetchRanking = async () => {
         try {
             let token = await getAccessToken();
@@ -81,6 +85,7 @@ export default function Statistics() {
         }
     };
 
+    //Puede ser entramos a las estadisticas y aun no se han recibido los resultados de los ultimos ejercicios. Ponemos un timer.
     useEffect(() => {
         let timeoutId;
 

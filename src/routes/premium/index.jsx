@@ -3,6 +3,7 @@ import { useAuth } from '../../utils/AuthContext';
 import { URL_STRIPE_PREMIUM } from '../../utils/constants';
 import { useLocalStorage } from '../../utils/localStorage';
 
+//Ruta donde se enseña la información del premium. Depende de si el usuario esta logueado o tiene premium, hay funcionalidades distintas.
 export default function Premium() {
 
   const [email, setEmail] = useLocalStorage('email', '');
@@ -50,17 +51,20 @@ export default function Premium() {
               </ul>
             </div>
             {!isLoggedIn ? (
+              //Si el usuario no esta registrado:
               <a
-                href="/Register" // Asegúrate de que esta ruta sea correcta
+                href="/Register" 
                 className="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-teal-500 to-teal-700 hover:bg-teal-600 focus:shadow-outline focus:outline-none ease-in-out transform hover:-translate-y-1 hover:scale-100"
               >
                 Regístrate y comience gratis
               </a>
             ) : isPremium ? (
+              //Si el usuario ya es premium:
               <p className="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-purple-500 to-purple-700 hover:bg-purple-600 focus:shadow-outline focus:outline-none">
                 Usted ya es premium
               </p>
             ) : (
+              //Si el usuario esta logueado pero no es premium:
               <p className="inline-flex items-center justify-center w-full h-12 px-6 font-medium tracking-wide text-white transition duration-200 rounded shadow-md bg-gradient-to-r from-gray-800 to-gray-900 hover:bg-gray-700 focus:shadow-outline focus:outline-none">
                 Usted tiene el modo básico
               </p>
