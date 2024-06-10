@@ -2,7 +2,7 @@ import { SERVER_DNS } from '../utils/constants';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-
+//Cargar todas las universidades disponibles
 export default function UniversityList() {
 
     const [universities, setUniversities] = useState([]);

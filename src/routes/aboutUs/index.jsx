@@ -15,7 +15,7 @@ export default function AboutUs() {
               SOBRE NOSOTROS
             </h2>
             <p className="mt-3 text-lg text-gray-600 dark:text-gray-400">
-            En MathCampus, creemos firmemente que las matemáticas son más que solo números y fórmulas; son la clave para entender el mundo que nos rodea. Nuestro objetivo es simplificar el aprendizaje de las matemáticas para estudiantes universitarios de todo el mundo, proporcionando una plataforma interactiva y automatizada que hace que resolver ejercicios y entender conceptos complejos sea más fácil y accesible que nunca.
+            MathCampus ofrece una plataforma interactiva para simplificar el aprendizaje de matemáticas para estudiantes universitarios, facilitando la resolución de ejercicios y la comprensión de conceptos complejos.
             </p>
           </div>
           {/* END Heading */}

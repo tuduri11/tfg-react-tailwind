@@ -12,7 +12,7 @@ import { isAuthenticated } from "../../session";
 import { useLocalStorage } from '../../utils/localStorage'
 
 
-
+//Ruta para registrarse.
 export default function Index() {
 
     const [show, setShow] = useState(false)
@@ -140,7 +140,7 @@ export default function Index() {
     };
 
 
-
+    //Funcion para validar todos los parámetros directmente.
     const validateParameters = useCallback(() => {
         validateEmail()
         validateCognoms()

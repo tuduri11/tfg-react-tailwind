@@ -28,6 +28,7 @@ export default function Dropdown() {
     navigate('/favourites');
   };
 
+  //La funcion logout del boton de dropdown.
   async function logOut() {
     let access = await getAccessToken()
     let response = await fetch(`${SERVER_DNS}/accounts/logout`,
@@ -49,9 +50,11 @@ export default function Dropdown() {
     const { success, msg } = await response
     setIsSubmitting(false)
     if (success) {
+      //Borramos las cookies 
       Cookies.remove('access_token')
       Cookies.remove('refresh_token')
       setIsSubmitting(false)
+      //Borramos los mensajes del chatbot
       localStorage.removeItem('chatMessages');
       //Si el logout es correcto, nos redirige al login otra vez.
       navigateToLogin()

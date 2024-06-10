@@ -7,6 +7,7 @@ import EmptyList from './EmptyList';
 import LoadingComponent from './LoadingComponent';
 import ErrorState from './ErrorState';
 
+//Lista de asignaturas de una carrera en concreto.
 export default function TopicList() {
     const { universitySlug, careerSlug } = useParams();
     const navigate = useNavigate();

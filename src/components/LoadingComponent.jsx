@@ -1,5 +1,6 @@
 import React from 'react';
 
+//Componente para la carga de datos del servidor.
 const LoadingComponent = () => {
     return (
         <div className="text-white flex flex-col min-h-screen w-full min-w-[320px] bg-gray-100 dark:bg-gray-900">

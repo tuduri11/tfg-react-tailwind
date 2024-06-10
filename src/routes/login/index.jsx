@@ -30,7 +30,7 @@ export default function Login() {
     isAuthenticated().then(res => setIsLoggedIn(res));
   }, [setIsLoggedIn]);
 
-
+//funcion para loguearse.
   async function handleSubmit(event) {
     event.preventDefault();
     setErrorMessages('')

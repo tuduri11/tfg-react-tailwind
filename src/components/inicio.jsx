@@ -6,10 +6,8 @@ export default function Inicio() {
     const { isLoggedIn } = useAuth();
     return (
         <>
-            {/* Hero Section: Image Side with Simple Header */}
+            {/* Hero Section */}
             <div className="relative overflow-hidden bg-white dark:bg-gray-900 dark:text-gray-100">
-                {/* Main Header */}
-                {/* END Main Header */}
                 {/* Hero Content */}
                 <div className="container relative mx-auto flex flex-col space-y-8 px-4 py-8 text-center lg:flex-row lg:space-y-0 lg:px-8 lg:py-16 lg:text-left xl:max-w-7xl">
                     <div className="lg:flex lg:w-1/2 lg:items-center">
@@ -68,7 +66,7 @@ export default function Inicio() {
                 </div>
                 {/* END Hero Content */}
             </div>
-            {/* END Hero Section: Image Side with Simple Header */}
+            {/* END Hero Section */}
         </>
     );
 }

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
+//Componente cuando no encontramos algo.
 export default function NotFoundComponent({ message, returnPath }) {
     const navigate = useNavigate();
     const handleReturn = () => {

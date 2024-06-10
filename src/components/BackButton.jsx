@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { FaArrowLeft } from 'react-icons/fa';
 
+//Boton para dirigirnos hacia tras en la navegacion general.
 export default function BackButton() {
     const navigate = useNavigate();
 

@@ -1,5 +1,6 @@
 import React from 'react';
 
+//Simbolo del token Mathy
 const TokenSymbol = () => {
   return (
     <div className="flex items-center justify-center bg-yellow-500 text-white rounded-full h-4 w-4">

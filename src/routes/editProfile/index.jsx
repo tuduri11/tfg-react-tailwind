@@ -92,6 +92,7 @@ export default function EditProfile() {
 
     };
 
+    //Al entrar al perfil, obtendremos toda la informacion del usuario.
     function initializeStateFromResponse(res) {
         setNom(res.name);
         setCognoms(res.surname);

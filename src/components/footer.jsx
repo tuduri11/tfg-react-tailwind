@@ -1,6 +1,7 @@
 import React from 'react';
 import logo from '../assets/MathCampus-logos_transparent.png'
 
+//Footer de toda la pagina. Estará presente siempre.
 export default function Footer() {
     return (
         <footer className=" w-full bg-white dark:bg-gray-900" >
