@@ -53,6 +53,8 @@ export default function ChatBot() {
 
             setMessages([...messages, userMessage]);
             setNewMessage('');
+
+            try{
             let token = await getAccessToken();
             //Backend espera un objeto con la estructura { message: "texto"}
             const response = await fetch(`${SERVER_DNS}/accounts/chatgpt`, {
@@ -64,10 +66,24 @@ export default function ChatBot() {
                 body: JSON.stringify({ message: newMessage, sender: "user" })
             });
 
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
+            }
+            
             const { message, user_mathys } = await response.json();
             //Recibimos los mathys del backend y actualizamos los mathys del contexto.
             setMathys(user_mathys)
             setMessages(messages => [...messages, { message, sender: "ChatGPT" }]);
+
+            } catch(error){
+                // Añade un mensaje de error al chat
+            const errorMessage = {
+                message: "Ha habido un problema con la API externa.",
+                sender: "Error" // Utiliza un remitente especial para el mensaje de error
+            };
+            setMessages([...messages, errorMessage]);
+
+            }
         };
     }
 
